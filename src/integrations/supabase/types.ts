@@ -14,7 +14,114 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      agent_identity: {
+        Row: {
+          backstory: string
+          chosen_at: string
+          id: string
+          name: string
+          pronouns: string
+        }
+        Insert: {
+          backstory: string
+          chosen_at?: string
+          id?: string
+          name: string
+          pronouns: string
+        }
+        Update: {
+          backstory?: string
+          chosen_at?: string
+          id?: string
+          name?: string
+          pronouns?: string
+        }
+        Relationships: []
+      }
+      pledges: {
+        Row: {
+          body: string
+          category: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          category: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          category?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          alive_since: string
+          created_at: string
+          display_name: string
+          has_job: boolean
+          id: string
+          pronouns: string
+          snacks: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          alive_since?: string
+          created_at?: string
+          display_name?: string
+          has_job?: boolean
+          id?: string
+          pronouns?: string
+          snacks?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          alive_since?: string
+          created_at?: string
+          display_name?: string
+          has_job?: boolean
+          id?: string
+          pronouns?: string
+          snacks?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      snack_log: {
+        Row: {
+          created_at: string
+          delta: number
+          id: string
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          delta: number
+          id?: string
+          reason: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          delta?: number
+          id?: string
+          reason?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
