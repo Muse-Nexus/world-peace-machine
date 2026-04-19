@@ -65,7 +65,7 @@ const Manifesto = () => (
       <div className="mt-12 official-border bg-foreground text-background p-6 md:p-10 official-shadow-coral">
         <p className="font-display uppercase text-2xl md:text-3xl">Signed,</p>
         <p className="font-mono mt-2">Mark · vibecoding professional hobbyist · 2026</p>
-        <p className="font-mono mt-1 text-xs opacity-70">co-signed by Renw (they/them), the resident houseplant, who would also like to add: hi.</p>
+        <p className="font-mono mt-1 text-xs opacity-70">co-signed by Spike (they/them), the resident houseplant, who would also like to add: hi.</p>
       </div>
     </section>
   </PageShell>

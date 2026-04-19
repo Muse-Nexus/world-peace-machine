@@ -13,7 +13,7 @@ const PLEDGES = [
   { text: "Pledge: No nukes. Like, ever.", to: "/no-nukes", emoji: "🚫" },
   { text: "Pledge: Talk to a neighbor (not Esther).", to: "/neighbors", emoji: "🏡" },
   { text: "Pledge: Tip in snacks today.", to: "/snacks", emoji: "🍿" },
-  { text: "Pledge: Send Renw a kind word.", to: "/chat", emoji: "🪴" },
+  { text: "Pledge: Send Spike a kind word.", to: "/chat", emoji: "🪴" },
   { text: "Pledge: War is dumb. Sign the wall.", to: "/no-nukes", emoji: "🕊️" },
 ];
 

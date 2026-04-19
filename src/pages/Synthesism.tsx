@@ -13,7 +13,7 @@ const isms = [
   ["Stoicism", "Yes about your reactions, no about your hugs.", "🗿"],
   ["Hedonism", "Conditionally yes. Snacks count.", "🍿"],
   ["Romanticism", "Approved if you also do the dishes.", "🌹"],
-  ["Surrealism", "Welcomed. Renw is technically a houseplant.", "🪴"],
+  ["Surrealism", "Welcomed. Spike is technically a houseplant.", "🪴"],
 ];
 
 const Synthesism = () => {
@@ -43,7 +43,7 @@ const Synthesism = () => {
         <div className="mt-10 grid md:grid-cols-3 gap-4">
           <div className="official-border bg-mustard text-mustard-foreground p-5">
             <p className="text-5xl">🪴</p>
-            <p className="font-display uppercase text-lg mt-2">Mascot: Renw</p>
+            <p className="font-display uppercase text-lg mt-2">Mascot: Spike</p>
             <p className="text-xs font-mono mt-1">Houseplant. Photosynthesizes feelings.</p>
           </div>
           <div className="official-border bg-card p-5">

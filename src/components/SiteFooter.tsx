@@ -20,12 +20,12 @@ export const SiteFooter = () => {
             Currently pending verification by literally everyone.
           </p>
           <a
-            href="https://markportfolio.example.com"
+            href="https://github.com/Muse-Nexus/world-peace-machine"
             target="_blank"
             rel="noreferrer"
             className="inline-block mt-4 official-border border-background bg-background text-foreground px-3 py-2 font-display uppercase text-xs tracking-wider hover:bg-coral hover:text-coral-foreground transition-colors"
           >
-            👀 Mark's Portfolio (yes, this is the subversive part)
+            ★ Source on GitHub — Muse-Nexus/world-peace-machine
           </a>
         </div>
         <div>
@@ -45,7 +45,7 @@ export const SiteFooter = () => {
             <li><Link to="/no-bickering" className="hover:underline">/no-bickering</Link></li>
             <li><Link to="/slacktivate" className="hover:underline">/slacktivate</Link></li>
             <li><Link to="/validate" className="hover:underline">/validate</Link></li>
-            <li><Link to="/chat" className="hover:underline">/chat (renw)</Link></li>
+            <li><Link to="/chat" className="hover:underline">/chat (spike)</Link></li>
             <li><Link to="/open-source" className="hover:underline">/open-source</Link></li>
             <li><Link to="/shop" className="hover:underline">/shop</Link></li>
           </ul>

@@ -77,7 +77,7 @@ const Slacktivate = () => {
           {/* AI VALIDATOR */}
           <div className="brutal-card bg-mustard text-mustard-foreground">
             <p className="font-display uppercase text-2xl">03 · Tell the AI a kind thought</p>
-            <p className="font-mono text-sm mt-2">Wren will validate it. Honestly. Not in a fake way. They'll point out what they actually liked.</p>
+            <p className="font-mono text-sm mt-2">Spike will validate it. Honestly. Not in a fake way. They'll point out what they actually liked.</p>
             <Link to="/validate"><Button className="mt-4 brutal-border bg-foreground text-background font-display uppercase">Get Validated →</Button></Link>
           </div>
 
