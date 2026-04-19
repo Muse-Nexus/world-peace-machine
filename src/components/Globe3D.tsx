@@ -214,7 +214,7 @@ export const Globe3D = () => {
 
       <div className="absolute bottom-3 left-3 official-border bg-card px-3 py-2 official-shadow-sm">
         <p className="text-xs font-mono uppercase">
-          🌍 Globe pets: <span className="font-display text-primary">{pets}</span>
+          🌍 TIMES PEOPLE TOUCHED MY GLOBE: <span className="font-display text-primary">{pets}</span>
         </p>
         <p className="text-[10px] font-mono text-muted-foreground">drag · click · planes shoot peaceful coral lasers</p>
       </div>
