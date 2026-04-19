@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
+import { useEffect, useRef } from "react";
+import confetti from "canvas-confetti";
 import { Globe3D } from "@/components/Globe3D";
 import { PageShell } from "@/components/PageShell";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, Heart, Github, Cookie, Zap } from "lucide-react";
 
 const HACKED_PHRASES = [
   "vibe-coded world peace",
