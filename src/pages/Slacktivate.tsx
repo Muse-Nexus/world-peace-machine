@@ -83,7 +83,7 @@ const Slacktivate = () => {
 
           {/* PET GLOBE */}
           <div className="brutal-card bg-secondary text-secondary-foreground">
-            <p className="font-display uppercase text-2xl">04 · Pet the globe</p>
+            <p className="font-display uppercase text-2xl">04 · TOUCH THE GLOBE</p>
             <p className="font-mono text-sm mt-2">Go home. Click the globe. Each pet is recorded by no one and counted by you alone. Surprisingly fulfilling.</p>
             <Link to="/"><Button className="mt-4 brutal-border bg-mustard text-mustard-foreground font-display uppercase">To the Globe →</Button></Link>
           </div>
