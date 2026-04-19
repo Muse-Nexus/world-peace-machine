@@ -166,9 +166,27 @@ const Index = () => {
             </Link>
           ))}
         </div>
+
+        {/* Mid CTA strip — under the pillars */}
+        <div className="mt-10 official-border official-shadow bg-mustard text-mustard-foreground p-5 flex flex-wrap items-center justify-between gap-4">
+          <p className="font-display uppercase text-xl md:text-2xl">
+            Pick a door. Any door. We'll count it as activism.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <Link to="/snacks">
+              <Button className="official-border bg-foreground text-background hover:bg-coral hover:text-coral-foreground font-display uppercase">
+                <Cookie className="mr-2 h-4 w-4" /> Claim Your Snacks
+              </Button>
+            </Link>
+            <Link to="/validate">
+              <Button variant="outline" className="official-border bg-background text-foreground hover:bg-primary hover:text-primary-foreground font-display uppercase">
+                <Heart className="mr-2 h-4 w-4" /> Validate Mark
+              </Button>
+            </Link>
+          </div>
+        </div>
       </section>
 
-      {/* MANIFESTO TEASER */}
       <section className="bg-foreground text-background py-16 lg:py-24 official-border border-x-0">
         <div className="container grid md:grid-cols-3 gap-8 items-center">
           <div className="md:col-span-2 space-y-4">
