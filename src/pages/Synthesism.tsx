@@ -3,7 +3,7 @@ import { useState } from "react";
 
 const isms = [
   ["Optimism", "Yes. Obviously. The lights are on.", "☀️"],
-  ["Realism", "Also yes. The dishes are still there.", "🍽️"],
+  ["Realism", "Yeah Dawg. We keep it the realest.", "🍽️"],
   ["Pacifism", "Loudly yes. With caveats only for board games.", "🕊️"],
   ["Pragmatism", "Yes — start with what you have, even if what you have is one snack.", "🛠️"],
   ["Humanism", "Yes, but extend the membership card to dogs.", "🐕"],
