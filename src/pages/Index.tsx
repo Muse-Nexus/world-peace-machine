@@ -51,7 +51,7 @@ const Index = () => {
               </Link>
               <Link to="/chat">
                 <Button size="lg" variant="ghost" className="official-border bg-card font-mono uppercase">
-                  <Sparkles className="mr-2 h-4 w-4" /> Talk to Renw 🪴
+                  <Sparkles className="mr-2 h-4 w-4" /> Talk to Spike 🪴
                 </Button>
               </Link>
             </div>
@@ -159,7 +159,7 @@ const Index = () => {
             { to: "/neighbors", label: "Neighbors", emoji: "🏡" },
             { to: "/blog", label: "The Blog", emoji: "📰" },
             { to: "/validate", label: "Validate Me", emoji: "🫶" },
-            { to: "/chat", label: "Talk to Renw", emoji: "🪴" },
+            { to: "/chat", label: "Talk to Spike", emoji: "🪴" },
             { to: "/snacks", label: "Snacks Market", emoji: "🍿" },
             { to: "/synthesism", label: "Synthesism", emoji: "🌐" },
             { to: "/open-source", label: "The Prompt", emoji: "📜" },

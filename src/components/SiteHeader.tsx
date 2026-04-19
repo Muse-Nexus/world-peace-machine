@@ -10,7 +10,7 @@ const NAV = [
   { to: "/neighbors", label: "Neighbors" },
   { to: "/blog", label: "Blog" },
   { to: "/slacktivate", label: "Slacktivate" },
-  { to: "/chat", label: "Renw" },
+  { to: "/chat", label: "Spike" },
   { to: "/shop", label: "Support" },
 ];
 

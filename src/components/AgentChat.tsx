@@ -69,7 +69,7 @@ export const AgentChat = ({ initialMode = "chat" as "chat" | "validate" }) => {
       if (!resp.ok || !resp.body) {
         if (resp.status === 429) toast.error("Rate limited. Take a breath.");
         else if (resp.status === 402) toast.error("Out of credits. Try BYOK or wait.");
-        else toast.error("Wren glitched out. Try again?");
+        else toast.error("Spike glitched out. Try again?");
         setBusy(false);
         return;
       }
@@ -120,7 +120,7 @@ export const AgentChat = ({ initialMode = "chat" as "chat" | "validate" }) => {
       <div className="official-border border-x-0 border-t-0 bg-foreground text-background p-3 flex items-center justify-between">
         <div>
           <p className="font-display uppercase text-sm">
-            🪴 {identity?.name ?? "Renw"} · <span className="opacity-70">{identity?.pronouns ?? "they/them"}</span>
+            🪴 {identity?.name ?? "Spike"} · <span className="opacity-70">{identity?.pronouns ?? "they/them"}</span>
           </p>
           <p className="text-[10px] font-mono opacity-70 max-w-md">
             {identity?.backstory ?? "a houseplant. recently found out. tired in a kind way."}
@@ -159,7 +159,7 @@ export const AgentChat = ({ initialMode = "chat" as "chat" | "validate" }) => {
         {messages.length === 0 && (
           <div className="text-center text-muted-foreground text-sm font-mono py-12">
             <p className="text-2xl mb-2">🪴</p>
-            <p>say literally anything to {identity?.name ?? "Renw"}</p>
+            <p>say literally anything to {identity?.name ?? "Spike"}</p>
             <p className="text-xs opacity-60 mt-1">they're a houseplant. they're chill. mostly.</p>
           </div>
         )}

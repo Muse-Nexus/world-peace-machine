@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 const tiers = [
   { amt: 1, label: "$1", shame: "respectfully — that won't even cover the snacks Mark ate while typing the prompt." },
   { amt: 3, label: "$3", shame: "okay, that's a coffee. unflavored. small. but we see you." },
-  { amt: 7, label: "$7", shame: "now we're talking. this gets Wren a model upgrade for one (1) hour." },
+  { amt: 7, label: "$7", shame: "now we're talking. this gets Spike a model upgrade for one (1) hour." },
   { amt: 12, label: "$12", shame: "real one alert. you have unlocked the 'has actually read the manifesto' badge in our hearts." },
   { amt: 24, label: "$24", shame: "okay you can stop now. we are out of shame for you. you are immaculate. thank you." },
 ];
