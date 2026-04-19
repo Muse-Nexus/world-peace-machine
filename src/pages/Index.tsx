@@ -16,6 +16,44 @@ const HACKED_PHRASES = [
 ];
 
 const Index = () => {
+  const peaceRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const blast = () => {
+      const el = peaceRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const x = (rect.left + rect.width / 2) / window.innerWidth;
+      const y = (rect.top + rect.height / 2) / window.innerHeight;
+      // Brutalist Peace palette: UN blue, coral, mustard, white, oxblood
+      const colors = ["#1F6FEB", "#FF6B6B", "#E8B84A", "#FFFFFF", "#7A1F1F"];
+      confetti({
+        particleCount: 90,
+        spread: 75,
+        startVelocity: 55,
+        origin: { x, y },
+        colors,
+        scalar: 1.1,
+        ticks: 220,
+      });
+      confetti({
+        particleCount: 40,
+        spread: 120,
+        startVelocity: 35,
+        origin: { x, y },
+        colors,
+        shapes: ["square"],
+        scalar: 0.8,
+      });
+    };
+    const t = setTimeout(blast, 1200);
+    const i = setInterval(blast, 6000);
+    return () => {
+      clearTimeout(t);
+      clearInterval(i);
+    };
+  }, []);
+
   return (
     <PageShell>
       {/* HERO */}
