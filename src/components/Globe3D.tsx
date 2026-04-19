@@ -1,6 +1,6 @@
 import { Suspense, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Stars, Html, Sphere } from "@react-three/drei";
+import { OrbitControls, Stars, Html, Sphere, Text } from "@react-three/drei";
 import * as THREE from "three";
 
 /**
@@ -106,10 +106,76 @@ function Globe({ onPet }: { onPet: () => void }) {
   );
 }
 
-function Plane({ radius, speed, offset, color }: { radius: number; speed: number; offset: number; color: string }) {
+// A single 3D flower made of a center + petals
+function Flower({ color = "#FF7F6E", scale = 1 }: { color?: string; scale?: number }) {
+  const petals = 6;
+  return (
+    <group scale={scale}>
+      {Array.from({ length: petals }).map((_, i) => {
+        const a = (i / petals) * Math.PI * 2;
+        return (
+          <mesh key={i} position={[Math.cos(a) * 0.06, Math.sin(a) * 0.06, 0]}>
+            <sphereGeometry args={[0.05, 10, 10]} />
+            <meshStandardMaterial color={color} roughness={0.7} />
+          </mesh>
+        );
+      })}
+      <mesh>
+        <sphereGeometry args={[0.045, 12, 12]} />
+        <meshStandardMaterial color="#F0B33A" roughness={0.6} />
+      </mesh>
+    </group>
+  );
+}
+
+// Stream of flowers shot from the plane's nose, looping in short blasts
+function FlowerStream({ colors }: { colors: string[] }) {
+  const COUNT = 5;
+  const refs = useRef<(THREE.Group | null)[]>([]);
+  const flowers = useMemo(
+    () => Array.from({ length: COUNT }).map((_, i) => ({
+      color: colors[i % colors.length],
+      offset: i / COUNT,
+    })),
+    [colors]
+  );
+
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    flowers.forEach((f, i) => {
+      const g = refs.current[i];
+      if (!g) return;
+      // Each flower cycles 0..1 over ~1.2s, staggered. Short blast feel.
+      const cycle = ((t * 0.85 + f.offset) % 1);
+      const dist = cycle * 2.2; // travels forward
+      g.position.set(0, 0, 0.5 + dist);
+      const fade = Math.sin(cycle * Math.PI); // fade in & out
+      g.scale.setScalar(0.6 + cycle * 0.8);
+      g.rotation.z = cycle * Math.PI * 2;
+      g.visible = fade > 0.05;
+      g.traverse((child) => {
+        const m = (child as THREE.Mesh).material as THREE.MeshStandardMaterial | undefined;
+        if (m && "opacity" in m) {
+          m.transparent = true;
+          m.opacity = fade;
+        }
+      });
+    });
+  });
+
+  return (
+    <>
+      {flowers.map((f, i) => (
+        <group key={i} ref={(el) => (refs.current[i] = el)}>
+          <Flower color={f.color} />
+        </group>
+      ))}
+    </>
+  );
+}
+
+function Plane({ radius, speed, offset, color, flowerColors }: { radius: number; speed: number; offset: number; color: string; flowerColors: string[] }) {
   const group = useRef<THREE.Group>(null!);
-  const laser = useRef<THREE.Mesh>(null!);
-  const trail = useRef<THREE.Mesh>(null!);
 
   useFrame((state) => {
     const t = state.clock.elapsedTime * speed + offset;
@@ -120,58 +186,114 @@ function Plane({ radius, speed, offset, color }: { radius: number; speed: number
       group.current.rotation.y = -t + Math.PI / 2;
       group.current.rotation.z = Math.sin(t * 2) * 0.08;
     }
-    const pulse = (Math.sin(state.clock.elapsedTime * 5 + offset) + 1) / 2;
-    if (laser.current) {
-      laser.current.scale.y = 0.6 + pulse * 1.6;
-      (laser.current.material as THREE.MeshBasicMaterial).opacity = pulse * 0.95;
-    }
-    if (trail.current) {
-      (trail.current.material as THREE.MeshBasicMaterial).opacity = 0.25 + pulse * 0.25;
+  });
+
+  return (
+    <group ref={group}>
+      {/* Fuselage */}
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.07, 0.05, 0.55, 16]} />
+        <meshStandardMaterial color={color} metalness={0.4} roughness={0.4} />
+      </mesh>
+      <mesh position={[0, 0, 0.32]} rotation={[Math.PI / 2, 0, 0]}>
+        <coneGeometry args={[0.07, 0.18, 16]} />
+        <meshStandardMaterial color={color} metalness={0.5} roughness={0.3} />
+      </mesh>
+      <mesh position={[0, 0, -0.02]}>
+        <boxGeometry args={[0.7, 0.03, 0.18]} />
+        <meshStandardMaterial color={color} metalness={0.3} roughness={0.5} />
+      </mesh>
+      <mesh position={[0, 0.1, -0.22]}>
+        <boxGeometry args={[0.03, 0.16, 0.12]} />
+        <meshStandardMaterial color={color} metalness={0.3} roughness={0.5} />
+      </mesh>
+      <mesh position={[0, 0, -0.22]}>
+        <boxGeometry args={[0.28, 0.025, 0.1]} />
+        <meshStandardMaterial color={color} metalness={0.3} roughness={0.5} />
+      </mesh>
+      <mesh position={[0, 0.05, 0.05]}>
+        <sphereGeometry args={[0.06, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
+        <meshStandardMaterial color="#cdeaff" metalness={0.6} roughness={0.1} />
+      </mesh>
+      {/* Flowers shot from the nose */}
+      <FlowerStream colors={flowerColors} />
+    </group>
+  );
+}
+
+// Banner-towing plane that loops across the sky
+function BannerPlane() {
+  const group = useRef<THREE.Group>(null!);
+  const radius = 3.6;
+  const speed = 0.25;
+  const yLevel = 1.8;
+
+  useFrame((state) => {
+    const t = state.clock.elapsedTime * speed;
+    if (group.current) {
+      group.current.position.x = Math.cos(t) * radius;
+      group.current.position.z = Math.sin(t) * radius;
+      group.current.position.y = yLevel + Math.sin(t * 1.2) * 0.15;
+      group.current.rotation.y = -t + Math.PI / 2;
     }
   });
 
   return (
     <group ref={group}>
-      {/* Fuselage — higher poly cylinder */}
+      {/* Plane body */}
       <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.07, 0.05, 0.55, 16]} />
-        <meshStandardMaterial color={color} metalness={0.4} roughness={0.4} />
+        <cylinderGeometry args={[0.08, 0.06, 0.6, 16]} />
+        <meshStandardMaterial color="#F0B33A" metalness={0.4} roughness={0.4} />
       </mesh>
-      {/* Nose cone */}
-      <mesh position={[0, 0, 0.32]} rotation={[Math.PI / 2, 0, 0]}>
-        <coneGeometry args={[0.07, 0.18, 16]} />
-        <meshStandardMaterial color={color} metalness={0.5} roughness={0.3} />
+      <mesh position={[0, 0, 0.35]} rotation={[Math.PI / 2, 0, 0]}>
+        <coneGeometry args={[0.08, 0.2, 16]} />
+        <meshStandardMaterial color="#F0B33A" metalness={0.5} roughness={0.3} />
       </mesh>
-      {/* Wings */}
       <mesh position={[0, 0, -0.02]}>
-        <boxGeometry args={[0.7, 0.03, 0.18]} />
-        <meshStandardMaterial color={color} metalness={0.3} roughness={0.5} />
+        <boxGeometry args={[0.8, 0.035, 0.2]} />
+        <meshStandardMaterial color="#F0B33A" metalness={0.3} roughness={0.5} />
       </mesh>
-      {/* Tail fin */}
-      <mesh position={[0, 0.1, -0.22]}>
-        <boxGeometry args={[0.03, 0.16, 0.12]} />
-        <meshStandardMaterial color={color} metalness={0.3} roughness={0.5} />
+      <mesh position={[0, 0.12, -0.25]}>
+        <boxGeometry args={[0.035, 0.18, 0.13]} />
+        <meshStandardMaterial color="#F0B33A" metalness={0.3} roughness={0.5} />
       </mesh>
-      {/* Tail wings */}
-      <mesh position={[0, 0, -0.22]}>
-        <boxGeometry args={[0.28, 0.025, 0.1]} />
-        <meshStandardMaterial color={color} metalness={0.3} roughness={0.5} />
+      {/* Tow rope */}
+      <mesh position={[0, 0, -0.7]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.005, 0.005, 0.6, 6]} />
+        <meshBasicMaterial color="#222" />
       </mesh>
-      {/* Cockpit dome */}
-      <mesh position={[0, 0.05, 0.05]}>
-        <sphereGeometry args={[0.06, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
-        <meshStandardMaterial color="#cdeaff" metalness={0.6} roughness={0.1} />
-      </mesh>
-      {/* Peaceful coral laser beam */}
-      <mesh ref={laser} position={[0, 0, 0.85]} rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.018, 0.018, 1.4, 12]} />
-        <meshBasicMaterial color="#FF7F6E" transparent opacity={0.9} />
-      </mesh>
-      {/* Laser glow halo */}
-      <mesh ref={trail} position={[0, 0, 0.85]} rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.05, 0.05, 1.4, 12]} />
-        <meshBasicMaterial color="#FF7F6E" transparent opacity={0.3} />
-      </mesh>
+      {/* Banner */}
+      <group position={[0, 0, -1.6]}>
+        <mesh>
+          <planeGeometry args={[1.6, 0.32]} />
+          <meshStandardMaterial color="#ffffff" side={THREE.DoubleSide} roughness={0.9} />
+        </mesh>
+        <Text
+          position={[0, 0, 0.01]}
+          fontSize={0.12}
+          color="#0E5DBA"
+          anchorX="center"
+          anchorY="middle"
+          maxWidth={1.5}
+          textAlign="center"
+        >
+          NOW WITH 118% LESS NUKES
+        </Text>
+        <Text
+          position={[0, 0, -0.01]}
+          rotation={[0, Math.PI, 0]}
+          fontSize={0.12}
+          color="#0E5DBA"
+          anchorX="center"
+          anchorY="middle"
+          maxWidth={1.5}
+          textAlign="center"
+        >
+          NOW WITH 118% LESS NUKES
+        </Text>
+      </group>
+      {/* Banner plane also shoots flowers */}
+      <FlowerStream colors={["#FF7F6E", "#F0B33A", "#ffffff"]} />
     </group>
   );
 }
@@ -184,11 +306,12 @@ function Scene({ onPet }: { onPet: () => void }) {
       <directionalLight position={[-5, -3, -5]} intensity={0.5} color="#FF7F6E" />
       <Stars radius={60} depth={30} count={800} factor={2.5} fade speed={0.4} />
       <Globe onPet={onPet} />
-      <Plane radius={2.6} speed={0.6} offset={0} color="#0E5DBA" />
-      <Plane radius={2.9} speed={0.45} offset={2.1} color="#FF7F6E" />
-      <Plane radius={2.4} speed={0.8} offset={4.2} color="#F0B33A" />
-      <Plane radius={3.1} speed={0.35} offset={1.0} color="#ffffff" />
-      <Plane radius={2.7} speed={0.55} offset={3.4} color="#0E5DBA" />
+      <Plane radius={2.6} speed={0.6} offset={0} color="#0E5DBA" flowerColors={["#FF7F6E", "#F0B33A"]} />
+      <Plane radius={2.9} speed={0.45} offset={2.1} color="#FF7F6E" flowerColors={["#ffffff", "#F0B33A"]} />
+      <Plane radius={2.4} speed={0.8} offset={4.2} color="#F0B33A" flowerColors={["#FF7F6E", "#ffffff"]} />
+      <Plane radius={3.1} speed={0.35} offset={1.0} color="#ffffff" flowerColors={["#FF7F6E", "#0E5DBA"]} />
+      <Plane radius={2.7} speed={0.55} offset={3.4} color="#0E5DBA" flowerColors={["#FF7F6E", "#F0B33A"]} />
+      <BannerPlane />
     </>
   );
 }
