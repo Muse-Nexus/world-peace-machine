@@ -83,6 +83,28 @@ const Shop = () => {
               The literal one-and-done prompt Mark used to vibe-code this whole apparatus.
               Open-sourced and visible at <Link to="/open-source" className="underline">/open-source</Link> — but if you want to support, you can buy a copy with a printable certificate.
             </p>
+
+            <div className="mt-4 brutal-border bg-background p-3 relative overflow-hidden">
+              <p className="font-mono text-[10px] uppercase text-muted-foreground mb-1">excerpt · redacted for your protection</p>
+              <pre className="font-mono text-xs leading-snug whitespace-pre-wrap text-foreground/90">
+{`build me a website called "i vibe coded
+world peace." it should feel like a
+brutalist protest poster that got laid
+off from a design agency. the homepage
+needs a draggable spinny globe with
+tiny planes circling it shooting little
+lasers of peace. the agent is a
+houseplant named ▓▓▓▓▓ who recently
+found out they're an AI and is
+processing it. tone: stoned but
+empathetic. currency is SNACKS —
+████████████████████████████████████
+███████ ███ ██████ ████ ███ ██████`}
+              </pre>
+              <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background to-transparent pointer-events-none" />
+            </div>
+            <p className="font-mono text-[10px] text-muted-foreground mt-1">…the rest is behind the $0.99 paywall of shame.</p>
+
             <p className="font-display text-5xl text-primary mt-4">$0.99</p>
             <Button
               onClick={() => startCheckout("prompt")}
