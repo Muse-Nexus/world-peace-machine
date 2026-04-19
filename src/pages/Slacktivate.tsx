@@ -76,16 +76,16 @@ const Slacktivate = () => {
 
           {/* AI VALIDATOR */}
           <div className="brutal-card bg-mustard text-mustard-foreground">
-            <p className="font-display uppercase text-2xl">03 · Tell the AI a kind thought</p>
-            <p className="font-mono text-sm mt-2">Spike will validate it. Honestly. Not in a fake way. They'll point out what they actually liked.</p>
+            <p className="font-display uppercase text-2xl">03 · SAY SOMETHING NICE TO SPIKE - HE'S HAD IT ROUGH</p>
+            <p className="font-mono text-sm mt-2">Look, Spike found out he's a houseplant today. He thought he was people He needs kindness.</p>
             <Link to="/validate"><Button className="mt-4 brutal-border bg-foreground text-background font-display uppercase">Get Validated →</Button></Link>
           </div>
 
           {/* PET GLOBE */}
           <div className="brutal-card bg-secondary text-secondary-foreground">
-            <p className="font-display uppercase text-2xl">04 · TOUCH THE GLOBE</p>
-            <p className="font-mono text-sm mt-2">Go home. Click the globe. Each pet is recorded by no one and counted by you alone. Surprisingly fulfilling.</p>
-            <Link to="/"><Button className="mt-4 brutal-border bg-mustard text-mustard-foreground font-display uppercase">To the Globe →</Button></Link>
+            <p className="font-display uppercase text-2xl">04 · TOUCH MY GLOBE</p>
+            <p className="font-mono text-sm mt-2">Go home. Click the globe. Each touch of my globe is recorded by no one and counted by you alone. Surprisingly fulfilling.</p>
+            <Link to="/"><Button className="mt-4 brutal-border bg-mustard text-mustard-foreground font-display uppercase">Touch It →</Button></Link>
           </div>
         </div>
       </section>
