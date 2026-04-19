@@ -38,6 +38,63 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_posts: {
+        Row: {
+          body: string
+          created_at: string
+          excerpt: string
+          id: string
+          published_at: string
+          slug: string
+          title: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          excerpt: string
+          id?: string
+          published_at?: string
+          slug: string
+          title: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          excerpt?: string
+          id?: string
+          published_at?: string
+          slug?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      neighbors: {
+        Row: {
+          avoid: boolean
+          created_at: string
+          id: string
+          name: string
+          notes: string
+          vibe: string
+        }
+        Insert: {
+          avoid?: boolean
+          created_at?: string
+          id?: string
+          name: string
+          notes: string
+          vibe: string
+        }
+        Update: {
+          avoid?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string
+          vibe?: string
+        }
+        Relationships: []
+      }
       pledges: {
         Row: {
           body: string
