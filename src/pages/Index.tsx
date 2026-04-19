@@ -236,6 +236,50 @@ const Index = () => {
           ))}
         </div>
       </section>
+
+      {/* FINAL BIG CTA — multi-button blowout */}
+      <section className="container pb-20">
+        <div className="official-border official-shadow bg-primary text-primary-foreground p-8 md:p-12 text-center space-y-6">
+          <p className="text-[10px] font-mono uppercase tracking-widest opacity-80">⚠ this is the part where you do a thing</p>
+          <h2 className="font-display uppercase text-4xl md:text-6xl leading-none">
+            Okay. Your move.
+          </h2>
+          <p className="font-mono max-w-2xl mx-auto opacity-90">
+            World peace is shipped. The repo is public. Mark works for snacks.
+            You have approximately five (5) reasonable next actions:
+          </p>
+          <div className="flex flex-wrap justify-center gap-3 pt-2">
+            <Link to="/shop">
+              <Button size="lg" className="official-border bg-coral text-coral-foreground hover:bg-mustard hover:text-mustard-foreground font-display uppercase tracking-wider">
+                <Heart className="mr-2 h-4 w-4" /> Tip Mark in Snacks
+              </Button>
+            </Link>
+            <Link to="/manifesto">
+              <Button size="lg" className="official-border bg-background text-foreground hover:bg-mustard hover:text-mustard-foreground font-display uppercase tracking-wider">
+                <Zap className="mr-2 h-4 w-4" /> Sign the Manifesto
+              </Button>
+            </Link>
+            <Link to="/chat">
+              <Button size="lg" className="official-border bg-mustard text-mustard-foreground hover:bg-coral hover:text-coral-foreground font-display uppercase tracking-wider">
+                <Sparkles className="mr-2 h-4 w-4" /> Talk to Spike 🪴
+              </Button>
+            </Link>
+            <a href="https://github.com/Muse-Nexus/world-peace-machine" target="_blank" rel="noreferrer">
+              <Button size="lg" variant="outline" className="official-border bg-foreground text-background hover:bg-coral hover:text-coral-foreground font-display uppercase tracking-wider">
+                <Github className="mr-2 h-4 w-4" /> Fork World Peace
+              </Button>
+            </a>
+            <a href="https://www.markmusenexus.com" target="_blank" rel="noreferrer">
+              <Button size="lg" variant="outline" className="official-border bg-card text-foreground hover:bg-coral hover:text-coral-foreground font-display uppercase tracking-wider">
+                ✦ Mark's Portfolio
+              </Button>
+            </a>
+          </div>
+          <p className="text-[10px] font-mono uppercase opacity-70 pt-4">
+            doing nothing is also fine. that's slacktivism. <Link to="/slacktivate" className="underline">claim it →</Link>
+          </p>
+        </div>
+      </section>
     </PageShell>
   );
 };
