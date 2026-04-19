@@ -70,7 +70,12 @@ const Index = () => {
             <h1 className="font-display uppercase text-5xl md:text-7xl leading-[0.9] tracking-tighter text-balance">
               I <span className="text-primary">vibe-coded</span>
               <br />
-              world peace.
+              world{" "}
+              <span ref={peaceRef} className="relative inline-block text-coral">
+                PEACE
+                <span className="absolute -top-3 -right-4 text-xs font-mono text-mustard rotate-12">★</span>
+              </span>
+              .
             </h1>
 
             <p className="text-lg md:text-xl font-mono text-foreground/80 max-w-xl text-balance">
