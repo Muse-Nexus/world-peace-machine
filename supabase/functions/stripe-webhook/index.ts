@@ -78,15 +78,17 @@ serve(async (req) => {
   const sig = req.headers.get("stripe-signature");
   const raw = await req.text();
 
+  if (!webhookSecret) {
+    console.error("STRIPE_WEBHOOK_SECRET not configured — refusing to process webhook");
+    return new Response("Webhook secret not configured", { status: 500 });
+  }
+  if (!sig) {
+    return new Response("Missing stripe-signature header", { status: 400 });
+  }
+
   let event: Stripe.Event;
   try {
-    if (webhookSecret && sig) {
-      event = await stripe.webhooks.constructEventAsync(raw, sig, webhookSecret);
-    } else {
-      // Fallback (dev): accept unsigned. WARN.
-      console.warn("STRIPE_WEBHOOK_SECRET missing — accepting unsigned event (dev only)");
-      event = JSON.parse(raw) as Stripe.Event;
-    }
+    event = await stripe.webhooks.constructEventAsync(raw, sig, webhookSecret);
   } catch (err) {
     console.error("webhook signature verification failed", err);
     return new Response("Bad signature", { status: 400 });
