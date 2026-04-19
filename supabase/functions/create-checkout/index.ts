@@ -76,7 +76,8 @@ serve(async (req) => {
       } catch (_) { /* anonymous is fine */ }
     }
 
-    const origin = req.headers.get("origin") || req.headers.get("referer")?.replace(/\/$/, "") || "https://ivibecodedworldpeace.com";
+    // Hardcoded canonical origin to prevent open-redirect via attacker-controlled Origin/Referer headers
+    const origin = "https://ivibecodedworldpeace.com";
 
     const lineItems = [{
       price_data: {
@@ -124,7 +125,7 @@ serve(async (req) => {
     return json({ url: session.url });
   } catch (e) {
     console.error("create-checkout error", e);
-    return json({ error: e instanceof Error ? e.message : "unknown" }, 500);
+    return json({ error: "An internal error occurred. Please try again." }, 500);
   }
 });
 
