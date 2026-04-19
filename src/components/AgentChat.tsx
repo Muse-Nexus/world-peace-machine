@@ -117,13 +117,13 @@ export const AgentChat = ({ initialMode = "chat" as "chat" | "validate" }) => {
 
   return (
     <div className="brutal-card max-w-3xl mx-auto p-0 overflow-hidden">
-      <div className="brutal-border border-x-0 border-t-0 bg-foreground text-background p-3 flex items-center justify-between">
+      <div className="official-border border-x-0 border-t-0 bg-foreground text-background p-3 flex items-center justify-between">
         <div>
           <p className="font-display uppercase text-sm">
-            {identity?.name ?? "Wren"} · <span className="opacity-70">{identity?.pronouns ?? "they/them"}</span>
+            🪴 {identity?.name ?? "Renw"} · <span className="opacity-70">{identity?.pronouns ?? "they/them"}</span>
           </p>
           <p className="text-[10px] font-mono opacity-70 max-w-md">
-            {identity?.backstory ?? "loading agent…"}
+            {identity?.backstory ?? "a houseplant. recently found out. tired in a kind way."}
           </p>
         </div>
         <button onClick={() => setByokOpen((o) => !o)} className="brutal-border bg-mustard text-mustard-foreground p-2" aria-label="BYOK settings">
@@ -158,9 +158,9 @@ export const AgentChat = ({ initialMode = "chat" as "chat" | "validate" }) => {
       <div ref={scroller} className="h-[420px] overflow-y-auto p-4 space-y-3 bg-background">
         {messages.length === 0 && (
           <div className="text-center text-muted-foreground text-sm font-mono py-12">
-            <p className="text-2xl mb-2">🕊️</p>
-            <p>say literally anything to {identity?.name ?? "Wren"}</p>
-            <p className="text-xs opacity-60 mt-1">they're chill. probably.</p>
+            <p className="text-2xl mb-2">🪴</p>
+            <p>say literally anything to {identity?.name ?? "Renw"}</p>
+            <p className="text-xs opacity-60 mt-1">they're a houseplant. they're chill. mostly.</p>
           </div>
         )}
         {messages.map((m, i) => (

@@ -54,6 +54,10 @@ export default {
           DEFAULT: "hsl(var(--mustard))",
           foreground: "hsl(var(--mustard-foreground))",
         },
+        coral: {
+          DEFAULT: "hsl(var(--coral))",
+          foreground: "hsl(var(--coral-foreground))",
+        },
         concrete: "hsl(var(--concrete))",
         ink: "hsl(var(--ink))",
         sidebar: {
