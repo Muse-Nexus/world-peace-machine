@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "anyone can create an order" ON public.orders;
