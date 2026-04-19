@@ -13,6 +13,8 @@ import Slacktivate from "./pages/Slacktivate.tsx";
 import Validate from "./pages/Validate.tsx";
 import Chat from "./pages/Chat.tsx";
 import Shop from "./pages/Shop.tsx";
+import ShopSuccess from "./pages/ShopSuccess.tsx";
+import ShopCancel from "./pages/ShopCancel.tsx";
 import OpenSource from "./pages/OpenSource.tsx";
 import Auth from "./pages/Auth.tsx";
 import Neighbors from "./pages/Neighbors.tsx";
@@ -40,6 +42,8 @@ const App = () => (
         <Route path="/validate" element={<Validate />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/shop" element={<Shop />} />
+        <Route path="/shop/success" element={<ShopSuccess />} />
+        <Route path="/shop/cancel" element={<ShopCancel />} />
         <Route path="/open-source" element={<OpenSource />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="*" element={<NotFound />} />

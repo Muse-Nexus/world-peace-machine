@@ -1,9 +1,20 @@
+import { useState } from "react";
 import { PageShell } from "@/components/PageShell";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
-const tiers = [
+type ItemKey =
+  | "prompt" | "gift"
+  | "tip_1" | "tip_3" | "tip_7" | "tip_12" | "tip_24"
+  | "sub_1" | "sub_3" | "sub_7" | "sub_12" | "sub_24";
+
+const tiers: { amt: 1 | 3 | 7 | 12 | 24; label: string; shame: string }[] = [
   { amt: 1, label: "$1", shame: "respectfully — that won't even cover the snacks Mark ate while typing the prompt." },
   { amt: 3, label: "$3", shame: "okay, that's a coffee. unflavored. small. but we see you." },
   { amt: 7, label: "$7", shame: "now we're talking. this gets Spike a model upgrade for one (1) hour." },
@@ -12,10 +23,43 @@ const tiers = [
 ];
 
 const Shop = () => {
-  const stub = (what: string) => toast(
-    `${what} — checkout coming soon.`,
-    { description: "Stripe needs to be enabled (requires Lovable Cloud). Mark, see chat for details." }
-  );
+  const [busy, setBusy] = useState<ItemKey | null>(null);
+  const [giftOpen, setGiftOpen] = useState(false);
+  const [giftEmail, setGiftEmail] = useState("");
+  const [giftNote, setGiftNote] = useState("");
+
+  async function startCheckout(item: ItemKey, extra?: { gift_recipient_email?: string; gift_note?: string }) {
+    try {
+      setBusy(item);
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { item, ...extra },
+      });
+      if (error) throw error;
+      if (!data?.url) throw new Error("No checkout URL returned");
+      window.location.href = data.url;
+    } catch (e) {
+      console.error(e);
+      toast.error("Checkout hiccup", {
+        description: e instanceof Error ? e.message : "Try again in a sec.",
+      });
+      setBusy(null);
+    }
+  }
+
+  function submitGift(e: React.FormEvent) {
+    e.preventDefault();
+    const email = giftEmail.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error("That email looks sus");
+      return;
+    }
+    if (giftNote.length > 500) {
+      toast.error("Note too long (max 500)");
+      return;
+    }
+    setGiftOpen(false);
+    startCheckout("gift", { gift_recipient_email: email, gift_note: giftNote.trim() || undefined });
+  }
 
   return (
     <PageShell>
@@ -40,7 +84,13 @@ const Shop = () => {
               Open-sourced and visible at <Link to="/open-source" className="underline">/open-source</Link> — but if you want to support, you can buy a copy with a printable certificate.
             </p>
             <p className="font-display text-5xl text-primary mt-4">$0.99</p>
-            <Button onClick={() => stub("Prompt $0.99")} className="mt-3 brutal-border bg-foreground text-background font-display uppercase w-full">Buy it</Button>
+            <Button
+              onClick={() => startCheckout("prompt")}
+              disabled={busy !== null}
+              className="mt-3 brutal-border bg-foreground text-background font-display uppercase w-full"
+            >
+              {busy === "prompt" ? "Sending you to Stripe…" : "Buy it"}
+            </Button>
           </div>
 
           <div className="brutal-card bg-mustard text-mustard-foreground">
@@ -50,7 +100,13 @@ const Shop = () => {
               We send it to a friend with an optional note saying you did this. They will be confused, then delighted.
             </p>
             <p className="font-display text-5xl mt-4">$1.99</p>
-            <Button onClick={() => stub("Gift $1.99")} className="mt-3 brutal-border bg-foreground text-background font-display uppercase w-full">Send it</Button>
+            <Button
+              onClick={() => setGiftOpen(true)}
+              disabled={busy !== null}
+              className="mt-3 brutal-border bg-foreground text-background font-display uppercase w-full"
+            >
+              {busy === "gift" ? "Sending you to Stripe…" : "Send it"}
+            </Button>
           </div>
         </div>
 
@@ -66,21 +122,78 @@ const Shop = () => {
           </p>
 
           <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
-            {tiers.map((t) => (
-              <div key={t.amt} className="brutal-border brutal-shadow bg-card p-4 hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none transition-all">
-                <p className="font-display text-3xl text-primary">{t.label}</p>
-                <p className="font-mono text-xs mt-2 text-foreground/80 leading-snug">{t.shame}</p>
-                <Button onClick={() => stub(`One-time ${t.label}`)} className="mt-3 brutal-border bg-foreground text-background font-mono text-xs w-full">One-time</Button>
-                <Button onClick={() => stub(`Monthly ${t.label}`)} className="mt-2 brutal-border bg-secondary text-secondary-foreground font-mono text-xs w-full">Monthly</Button>
-              </div>
-            ))}
+            {tiers.map((t) => {
+              const oneTimeKey = `tip_${t.amt}` as ItemKey;
+              const monthlyKey = `sub_${t.amt}` as ItemKey;
+              return (
+                <div key={t.amt} className="brutal-border brutal-shadow bg-card p-4 hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none transition-all">
+                  <p className="font-display text-3xl text-primary">{t.label}</p>
+                  <p className="font-mono text-xs mt-2 text-foreground/80 leading-snug">{t.shame}</p>
+                  <Button
+                    onClick={() => startCheckout(oneTimeKey)}
+                    disabled={busy !== null}
+                    className="mt-3 brutal-border bg-foreground text-background font-mono text-xs w-full"
+                  >
+                    {busy === oneTimeKey ? "…" : "One-time"}
+                  </Button>
+                  <Button
+                    onClick={() => startCheckout(monthlyKey)}
+                    disabled={busy !== null}
+                    className="mt-2 brutal-border bg-secondary text-secondary-foreground font-mono text-xs w-full"
+                  >
+                    {busy === monthlyKey ? "…" : "Monthly"}
+                  </Button>
+                </div>
+              );
+            })}
           </div>
 
           <p className="mt-6 text-xs font-mono text-muted-foreground">
-            ⓘ Checkout is currently stubbed — Stripe via Lovable Payments requires Lovable Cloud (this project is on a custom Supabase). When Mark migrates, the buttons go live without a code change.
+            ⓘ Payments processed by Stripe. Currently in test mode — use card 4242 4242 4242 4242, any future date, any CVC.
           </p>
         </div>
       </section>
+
+      <Dialog open={giftOpen} onOpenChange={setGiftOpen}>
+        <DialogContent className="brutal-border">
+          <DialogHeader>
+            <DialogTitle className="font-display uppercase text-2xl">Gift The Prompt</DialogTitle>
+            <DialogDescription className="font-mono">
+              Where should we send this small chaos?
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={submitGift} className="space-y-3">
+            <div>
+              <Label htmlFor="giftEmail" className="font-mono text-xs uppercase">Friend's email</Label>
+              <Input
+                id="giftEmail"
+                type="email"
+                required
+                maxLength={254}
+                value={giftEmail}
+                onChange={(e) => setGiftEmail(e.target.value)}
+                placeholder="someone@earth.org"
+                className="brutal-border font-mono mt-1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="giftNote" className="font-mono text-xs uppercase">Note (optional, max 500)</Label>
+              <Textarea
+                id="giftNote"
+                maxLength={500}
+                value={giftNote}
+                onChange={(e) => setGiftNote(e.target.value)}
+                placeholder="thinking of you. also world peace."
+                className="brutal-border font-mono mt-1"
+              />
+              <p className="text-xs font-mono text-muted-foreground mt-1">{giftNote.length}/500</p>
+            </div>
+            <Button type="submit" className="brutal-border bg-foreground text-background font-display uppercase w-full">
+              Continue to checkout · $1.99
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </PageShell>
   );
 };
