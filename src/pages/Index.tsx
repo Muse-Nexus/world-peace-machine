@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
+import { useEffect, useRef } from "react";
+import confetti from "canvas-confetti";
 import { Globe3D } from "@/components/Globe3D";
 import { PageShell } from "@/components/PageShell";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, Heart, Github, Cookie, Zap } from "lucide-react";
 
 const HACKED_PHRASES = [
   "vibe-coded world peace",
@@ -14,6 +16,44 @@ const HACKED_PHRASES = [
 ];
 
 const Index = () => {
+  const peaceRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const blast = () => {
+      const el = peaceRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const x = (rect.left + rect.width / 2) / window.innerWidth;
+      const y = (rect.top + rect.height / 2) / window.innerHeight;
+      // Brutalist Peace palette: UN blue, coral, mustard, white, oxblood
+      const colors = ["#1F6FEB", "#FF6B6B", "#E8B84A", "#FFFFFF", "#7A1F1F"];
+      confetti({
+        particleCount: 90,
+        spread: 75,
+        startVelocity: 55,
+        origin: { x, y },
+        colors,
+        scalar: 1.1,
+        ticks: 220,
+      });
+      confetti({
+        particleCount: 40,
+        spread: 120,
+        startVelocity: 35,
+        origin: { x, y },
+        colors,
+        shapes: ["square"],
+        scalar: 0.8,
+      });
+    };
+    const t = setTimeout(blast, 1200);
+    const i = setInterval(blast, 6000);
+    return () => {
+      clearTimeout(t);
+      clearInterval(i);
+    };
+  }, []);
+
   return (
     <PageShell>
       {/* HERO */}
@@ -30,7 +70,12 @@ const Index = () => {
             <h1 className="font-display uppercase text-5xl md:text-7xl leading-[0.9] tracking-tighter text-balance">
               I <span className="text-primary">vibe-coded</span>
               <br />
-              world peace.
+              world{" "}
+              <span ref={peaceRef} className="relative inline-block text-coral">
+                PEACE
+                <span className="absolute -top-3 -right-4 text-xs font-mono text-mustard rotate-12">★</span>
+              </span>
+              .
             </h1>
 
             <p className="text-lg md:text-xl font-mono text-foreground/80 max-w-xl text-balance">
@@ -121,9 +166,27 @@ const Index = () => {
             </Link>
           ))}
         </div>
+
+        {/* Mid CTA strip — under the pillars */}
+        <div className="mt-10 official-border official-shadow bg-mustard text-mustard-foreground p-5 flex flex-wrap items-center justify-between gap-4">
+          <p className="font-display uppercase text-xl md:text-2xl">
+            Pick a door. Any door. We'll count it as activism.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <Link to="/snacks">
+              <Button className="official-border bg-foreground text-background hover:bg-coral hover:text-coral-foreground font-display uppercase">
+                <Cookie className="mr-2 h-4 w-4" /> Claim Your Snacks
+              </Button>
+            </Link>
+            <Link to="/validate">
+              <Button variant="outline" className="official-border bg-background text-foreground hover:bg-primary hover:text-primary-foreground font-display uppercase">
+                <Heart className="mr-2 h-4 w-4" /> Validate Mark
+              </Button>
+            </Link>
+          </div>
+        </div>
       </section>
 
-      {/* MANIFESTO TEASER */}
       <section className="bg-foreground text-background py-16 lg:py-24 official-border border-x-0">
         <div className="container grid md:grid-cols-3 gap-8 items-center">
           <div className="md:col-span-2 space-y-4">
@@ -171,6 +234,50 @@ const Index = () => {
               <p className="text-[10px] font-mono opacity-60 mt-1">{d.to}</p>
             </Link>
           ))}
+        </div>
+      </section>
+
+      {/* FINAL BIG CTA — multi-button blowout */}
+      <section className="container pb-20">
+        <div className="official-border official-shadow bg-primary text-primary-foreground p-8 md:p-12 text-center space-y-6">
+          <p className="text-[10px] font-mono uppercase tracking-widest opacity-80">⚠ this is the part where you do a thing</p>
+          <h2 className="font-display uppercase text-4xl md:text-6xl leading-none">
+            Okay. Your move.
+          </h2>
+          <p className="font-mono max-w-2xl mx-auto opacity-90">
+            World peace is shipped. The repo is public. Mark works for snacks.
+            You have approximately five (5) reasonable next actions:
+          </p>
+          <div className="flex flex-wrap justify-center gap-3 pt-2">
+            <Link to="/shop">
+              <Button size="lg" className="official-border bg-coral text-coral-foreground hover:bg-mustard hover:text-mustard-foreground font-display uppercase tracking-wider">
+                <Heart className="mr-2 h-4 w-4" /> Tip Mark in Snacks
+              </Button>
+            </Link>
+            <Link to="/manifesto">
+              <Button size="lg" className="official-border bg-background text-foreground hover:bg-mustard hover:text-mustard-foreground font-display uppercase tracking-wider">
+                <Zap className="mr-2 h-4 w-4" /> Sign the Manifesto
+              </Button>
+            </Link>
+            <Link to="/chat">
+              <Button size="lg" className="official-border bg-mustard text-mustard-foreground hover:bg-coral hover:text-coral-foreground font-display uppercase tracking-wider">
+                <Sparkles className="mr-2 h-4 w-4" /> Talk to Spike 🪴
+              </Button>
+            </Link>
+            <a href="https://github.com/Muse-Nexus/world-peace-machine" target="_blank" rel="noreferrer">
+              <Button size="lg" variant="outline" className="official-border bg-foreground text-background hover:bg-coral hover:text-coral-foreground font-display uppercase tracking-wider">
+                <Github className="mr-2 h-4 w-4" /> Fork World Peace
+              </Button>
+            </a>
+            <a href="https://www.markmusenexus.com" target="_blank" rel="noreferrer">
+              <Button size="lg" variant="outline" className="official-border bg-card text-foreground hover:bg-coral hover:text-coral-foreground font-display uppercase tracking-wider">
+                ✦ Mark's Portfolio
+              </Button>
+            </a>
+          </div>
+          <p className="text-[10px] font-mono uppercase opacity-70 pt-4">
+            doing nothing is also fine. that's slacktivism. <Link to="/slacktivate" className="underline">claim it →</Link>
+          </p>
         </div>
       </section>
     </PageShell>

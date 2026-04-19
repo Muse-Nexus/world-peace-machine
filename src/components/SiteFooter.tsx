@@ -19,14 +19,27 @@ export const SiteFooter = () => {
             An open-source act of global harmony. Built on a Tuesday. Powered by snacks.
             Currently pending verification by literally everyone.
           </p>
-          <a
-            href="https://github.com/Muse-Nexus/world-peace-machine"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-block mt-4 official-border border-background bg-background text-foreground px-3 py-2 font-display uppercase text-xs tracking-wider hover:bg-coral hover:text-coral-foreground transition-colors"
-          >
-            ★ Source on GitHub — Muse-Nexus/world-peace-machine
-          </a>
+          <div className="flex flex-wrap gap-2 mt-4">
+            <a
+              href="https://github.com/Muse-Nexus/world-peace-machine"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-block official-border border-background bg-background text-foreground px-3 py-2 font-display uppercase text-xs tracking-wider hover:bg-coral hover:text-coral-foreground transition-colors"
+            >
+              ★ Source on GitHub
+            </a>
+            <a
+              href="https://www.markmusenexus.com"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-block official-border border-background bg-coral text-coral-foreground px-3 py-2 font-display uppercase text-xs tracking-wider hover:bg-mustard hover:text-mustard-foreground transition-colors"
+            >
+              ✦ Mark's Portfolio
+            </a>
+          </div>
+          <p className="text-[10px] font-mono opacity-60 mt-3">
+            ⚠ subversive footnote: yes, this is the part where Mark gets you to look at his shit. it's working.
+          </p>
         </div>
         <div>
           <p className="font-display uppercase text-coral mb-2">Doors</p>
