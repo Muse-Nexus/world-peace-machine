@@ -95,6 +95,60 @@ export type Database = {
         }
         Relationships: []
       }
+      orders: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          currency: string
+          customer_email: string | null
+          gift_note: string | null
+          gift_recipient_email: string | null
+          id: string
+          item: string
+          mode: string
+          status: string
+          stripe_payment_intent: string | null
+          stripe_session_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          currency?: string
+          customer_email?: string | null
+          gift_note?: string | null
+          gift_recipient_email?: string | null
+          id?: string
+          item: string
+          mode?: string
+          status?: string
+          stripe_payment_intent?: string | null
+          stripe_session_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          currency?: string
+          customer_email?: string | null
+          gift_note?: string | null
+          gift_recipient_email?: string | null
+          id?: string
+          item?: string
+          mode?: string
+          status?: string
+          stripe_payment_intent?: string | null
+          stripe_session_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       pledges: {
         Row: {
           body: string
