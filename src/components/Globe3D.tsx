@@ -339,7 +339,7 @@ export const Globe3D = () => {
         <p className="text-xs font-mono uppercase">
           🌍 TIMES PEOPLE TOUCHED MY GLOBE: <span className="font-display text-primary">{pets}</span>
         </p>
-        <p className="text-[10px] font-mono text-muted-foreground">drag · click · planes shoot peaceful coral lasers</p>
+         <p className="text-[10px] font-mono text-muted-foreground">drag · click · planes shoot peaceful flower lasers</p>
       </div>
       <div className="absolute top-3 right-3 stamp text-[10px]">UN-ADJACENT · OFFICIAL-ISH</div>
     </div>
