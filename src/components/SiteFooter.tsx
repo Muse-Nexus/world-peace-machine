@@ -37,9 +37,7 @@ export const SiteFooter = () => {
               ✦ Mark's Portfolio
             </a>
           </div>
-          <p className="text-[10px] font-mono opacity-60 mt-3">
-            ⚠ subversive footnote: yes, this is the part where Mark gets you to look at his shit. it's working.
-          </p>
+          <p className="text-[10px] font-mono opacity-60 mt-3">{"\n"}</p>
         </div>
         <div>
           <p className="font-display uppercase text-coral mb-2">Doors</p>
