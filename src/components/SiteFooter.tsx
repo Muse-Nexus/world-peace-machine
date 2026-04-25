@@ -29,7 +29,7 @@ export const SiteFooter = () => {
               ★ Source on GitHub
             </a>
             <a
-              href="https://www.markdmatthews.com"
+              href="https://markdmatthews.com"
               target="_blank"
               rel="noreferrer"
               className="inline-block official-border border-background bg-coral text-coral-foreground px-3 py-2 font-display uppercase text-xs tracking-wider hover:bg-mustard hover:text-mustard-foreground transition-colors"
