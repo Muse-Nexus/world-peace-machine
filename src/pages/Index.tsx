@@ -180,7 +180,7 @@ const Index = () => {
             </Link>
             <Link to="/validate">
               <Button variant="outline" className="official-border bg-background text-foreground hover:bg-primary hover:text-primary-foreground font-display uppercase">
-                <Heart className="mr-2 h-4 w-4" /> Validate Mark
+                <Heart className="mr-2 h-4 w-4" /> Validate Spike
               </Button>
             </Link>
           </div>
