@@ -171,7 +171,7 @@ empathetic. currency is SNACKS —
           </div>
 
           <p className="mt-6 text-xs font-mono text-muted-foreground">
-            ⓘ Payments processed by Stripe. Currently in test mode — use card 4242 4242 4242 4242, any future date, any CVC.
+            ⓘ Payments processed securely by Stripe. Snacks, prompts, and tips are non-refundable acts of goodwill.
           </p>
         </div>
       </section>

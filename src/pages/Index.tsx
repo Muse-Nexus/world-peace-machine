@@ -264,12 +264,12 @@ const Index = () => {
                 <Sparkles className="mr-2 h-4 w-4" /> Talk to Spike 🪴
               </Button>
             </Link>
-            <a href="https://github.com/Muse-Nexus/world-peace-machine" target="_blank" rel="noreferrer">
+            <a href="https://github.com/Muse-Nexus" target="_blank" rel="noreferrer">
               <Button size="lg" variant="outline" className="official-border bg-foreground text-background hover:bg-coral hover:text-coral-foreground font-display uppercase tracking-wider">
                 <Github className="mr-2 h-4 w-4" /> Fork World Peace
               </Button>
             </a>
-            <a href="https://www.markmusenexus.com" target="_blank" rel="noreferrer">
+            <a href="https://markdmatthews.com" target="_blank" rel="noreferrer">
               <Button size="lg" variant="outline" className="official-border bg-card text-foreground hover:bg-coral hover:text-coral-foreground font-display uppercase tracking-wider">
                 ✦ Mark's Portfolio
               </Button>

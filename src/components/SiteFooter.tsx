@@ -21,7 +21,7 @@ export const SiteFooter = () => {
           </p>
           <div className="flex flex-wrap gap-2 mt-4">
             <a
-              href="https://github.com/Muse-Nexus/world-peace-machine"
+              href="https://github.com/Muse-Nexus"
               target="_blank"
               rel="noreferrer"
               className="inline-block official-border border-background bg-background text-foreground px-3 py-2 font-display uppercase text-xs tracking-wider hover:bg-coral hover:text-coral-foreground transition-colors"
@@ -37,7 +37,6 @@ export const SiteFooter = () => {
               ✦ Mark's Portfolio
             </a>
           </div>
-          <p className="text-[10px] font-mono opacity-60 mt-3">{"\n"}</p>
         </div>
         <div>
           <p className="font-display uppercase text-coral mb-2">Doors</p>
