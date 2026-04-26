@@ -79,7 +79,7 @@ const Index = () => {
             </h1>
 
             <p className="text-lg md:text-xl font-mono text-foreground/80 max-w-xl text-balance">
-              Hi. I'm Mark. I believe the children are our future. Also, I went ahead and <span className="text-coral font-bold">hacked</span> global harmony in a single prompt.
+              Hi. I'm Mark. I believe the children are our future. Also, I went ahead and <span className="text-coral font-bold">hacked</span> global harmony in a single prompt (and then edited with more prompts).
               You're welcome. Kinda weird that nobody was doing it. If you feel like you owe me, I would like to validate that feeling.
             </p>
 
