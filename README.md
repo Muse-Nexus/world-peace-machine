@@ -7,6 +7,8 @@ Live: **[ivibecodedworldpeace.com](https://ivibecodedworldpeace.com)**
 
 By [Mark D. Matthews](https://markdmatthews.com) — vibecoding professional hobbyist.
 
+Repo: **[github.com/Muse-Nexus/world-peace-machine](https://github.com/Muse-Nexus/world-peace-machine)**
+
 ## What is this?
 
 A brutalist protest-poster of a website that ships world peace as a feature. There's a draggable spinny globe, a houseplant AI named Spike who is processing being an AI, an in-app currency called SNACKS, a tip jar with escalating shame, and a manifesto. It is a joke. It is also entirely sincere.
@@ -23,6 +25,8 @@ A brutalist protest-poster of a website that ships world peace as a feature. The
 ## Run it
 
 ```bash
+git clone https://github.com/Muse-Nexus/world-peace-machine.git
+cd world-peace-machine
 bun install
 bun run dev
 ```
