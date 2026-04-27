@@ -26,7 +26,7 @@ const GiftPrompt = ({ buyerEmail, note }: GiftPromptProps) => {
       <Body
         style={{
           fontFamily: 'ui-monospace, Menlo, monospace',
-          backgroundColor: '#e8e4d9',
+          backgroundColor: '#ede4d0',
           margin: 0,
           padding: '24px 0',
         }}
@@ -36,13 +36,13 @@ const GiftPrompt = ({ buyerEmail, note }: GiftPromptProps) => {
             maxWidth: '540px',
             margin: '0 auto',
             padding: '24px',
-            backgroundColor: '#f4f1ea',
-            border: '3px solid #111111',
+            backgroundColor: '#f6f0e1',
+            border: '3px solid #14213d',
           }}
         >
           <Section
             style={{
-              backgroundColor: '#FF6B1A',
+              backgroundColor: '#005bbb',
               color: '#ffffff',
               padding: '6px 10px',
               display: 'inline-block',
@@ -60,12 +60,12 @@ const GiftPrompt = ({ buyerEmail, note }: GiftPromptProps) => {
               lineHeight: 1,
               margin: '16px 0',
               textTransform: 'uppercase',
-              color: '#111111',
+              color: '#14213d',
             }}
           >
             Someone bought you The Prompt.
           </Heading>
-          <Text style={{ fontSize: '14px', lineHeight: 1.5, color: '#111111' }}>
+          <Text style={{ fontSize: '14px', lineHeight: 1.5, color: '#14213d' }}>
             It is the literal one-and-done prompt Mark used to vibe-code world
             peace. You did not ask for this. That's part of the gift.
           </Text>
@@ -73,7 +73,7 @@ const GiftPrompt = ({ buyerEmail, note }: GiftPromptProps) => {
             <Section
               style={{
                 backgroundColor: '#ffffff',
-                border: '2px solid #111111',
+                border: '2px solid #14213d',
                 padding: '12px',
                 margin: '16px 0',
               }}
@@ -82,7 +82,7 @@ const GiftPrompt = ({ buyerEmail, note }: GiftPromptProps) => {
                 style={{
                   fontSize: '10px',
                   textTransform: 'uppercase',
-                  color: '#666666',
+                  color: '#5a6478',
                   margin: '0 0 6px 0',
                 }}
               >
@@ -93,26 +93,26 @@ const GiftPrompt = ({ buyerEmail, note }: GiftPromptProps) => {
                   fontSize: '14px',
                   whiteSpace: 'pre-wrap',
                   margin: 0,
-                  color: '#111111',
+                  color: '#14213d',
                 }}
               >
                 {note}
               </Text>
             </Section>
           ) : null}
-          <Text style={{ fontSize: '14px', color: '#111111' }}>
+          <Text style={{ fontSize: '14px', color: '#14213d' }}>
             Read it, sit with it, photosynthesize accordingly:
           </Text>
           <Link
             href="https://ivibecodedworldpeace.com/open-source"
-            style={{ color: '#FF6B1A', fontWeight: 700, fontSize: '14px' }}
+            style={{ color: '#005bbb', fontWeight: 700, fontSize: '14px' }}
           >
             → ivibecodedworldpeace.com/open-source
           </Link>
           <Text
             style={{
               fontSize: '11px',
-              color: '#666666',
+              color: '#5a6478',
               marginTop: '24px',
             }}
           >
