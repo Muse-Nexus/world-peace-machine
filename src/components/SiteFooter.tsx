@@ -21,7 +21,7 @@ export const SiteFooter = () => {
           </p>
           <div className="flex flex-wrap gap-2 mt-4">
             <a
-              href="https://github.com/Muse-Nexus"
+              href="https://github.com/Muse-Nexus/world-peace-machine"
               target="_blank"
               rel="noreferrer"
               className="inline-block official-border border-background bg-background text-foreground px-3 py-2 font-display uppercase text-xs tracking-wider hover:bg-coral hover:text-coral-foreground transition-colors"
