@@ -18,6 +18,7 @@ import ShopCancel from "./pages/ShopCancel.tsx";
 import OpenSource from "./pages/OpenSource.tsx";
 import Auth from "./pages/Auth.tsx";
 import Neighbors from "./pages/Neighbors.tsx";
+import Unsubscribe from "./pages/Unsubscribe.tsx";
 import { BlogIndex, BlogPost } from "./pages/Blog.tsx";
 
 const queryClient = new QueryClient();
@@ -46,6 +47,7 @@ const App = () => (
         <Route path="/shop/cancel" element={<ShopCancel />} />
         <Route path="/open-source" element={<OpenSource />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/unsubscribe" element={<Unsubscribe />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
