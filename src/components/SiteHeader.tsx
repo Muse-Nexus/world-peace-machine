@@ -1,6 +1,9 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const NAV = [
   { to: "/", label: "Home" },
@@ -17,6 +20,18 @@ const NAV = [
 export const SiteHeader = () => {
   const [open, setOpen] = useState(false);
   const loc = useLocation();
+  const { user, loading } = useAuth();
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    toast.success("Logged out. Snacks remain yours in spirit.");
+  };
+
+  const emailShort = user?.email
+    ? user.email.length > 18
+      ? user.email.slice(0, 16) + "…"
+      : user.email
+    : "";
 
   return (
     <header className="sticky top-0 z-50 official-border border-x-0 border-t-0 bg-background/95 backdrop-blur">
@@ -53,6 +68,29 @@ export const SiteHeader = () => {
               {n.label}
             </NavLink>
           ))}
+          {!loading && (
+            user ? (
+              <div className="ml-2 flex items-center gap-1">
+                <span className="official-border bg-mustard text-mustard-foreground px-2 py-1 text-[10px] font-mono uppercase tracking-wider" title={user.email ?? ""}>
+                  {emailShort}
+                </span>
+                <button
+                  onClick={signOut}
+                  className="official-border bg-card text-foreground px-2 py-1 text-[10px] font-mono uppercase tracking-wider hover:bg-coral hover:text-coral-foreground transition-colors flex items-center gap-1"
+                  aria-label="Sign out"
+                >
+                  <LogOut className="h-3 w-3" /> Out
+                </button>
+              </div>
+            ) : (
+              <Link
+                to="/auth"
+                className="ml-2 official-border bg-mustard text-mustard-foreground px-3 py-1 text-xs font-mono uppercase tracking-wider hover:bg-coral hover:text-coral-foreground transition-colors"
+              >
+                Sign In
+              </Link>
+            )
+          )}
         </nav>
 
         <button
@@ -79,6 +117,24 @@ export const SiteHeader = () => {
                 {n.label}
               </Link>
             ))}
+            {!loading && (
+              user ? (
+                <button
+                  onClick={() => { setOpen(false); signOut(); }}
+                  className="px-2 py-2 text-sm font-mono uppercase text-left border-t border-border mt-1"
+                >
+                  Sign Out ({emailShort})
+                </button>
+              ) : (
+                <Link
+                  to="/auth"
+                  onClick={() => setOpen(false)}
+                  className="px-2 py-2 text-sm font-mono uppercase bg-mustard text-mustard-foreground border-t border-border mt-1"
+                >
+                  Sign In
+                </Link>
+              )
+            )}
           </div>
         </div>
       )}
