@@ -7,64 +7,39 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, stripe-signature",
 };
 
-const RESEND_GATEWAY = "https://connector-gateway.lovable.dev/resend";
-
 async function sendGiftEmail(opts: {
   to: string;
   note: string | null;
   buyerEmail?: string | null;
+  sessionId: string;
 }) {
-  const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-  const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-  if (!RESEND_API_KEY) {
-    console.warn("RESEND_API_KEY missing — skipping gift email");
+  const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+  const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!SUPABASE_URL || !SERVICE_KEY) {
+    console.warn("Supabase env missing — skipping gift email");
     return;
   }
-
-  // Direct Resend API (key-based) — no gateway needed since user pasted key directly.
-  const html = `
-    <div style="font-family: ui-monospace, Menlo, monospace; max-width: 540px; margin: 0 auto; padding: 24px; background: #f4f1ea; border: 3px solid #111;">
-      <div style="background:#FF6B1A; color:#fff; padding:6px 10px; display:inline-block; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; font-size: 11px;">a gift · world peace</div>
-      <h1 style="font-size: 32px; line-height: 1; margin: 16px 0; text-transform: uppercase;">Someone bought you The Prompt.</h1>
-      <p style="font-size: 14px; line-height: 1.5;">
-        It is the literal one-and-done prompt Mark used to vibe-code world peace.
-        You did not ask for this. That's part of the gift.
-      </p>
-      ${opts.note ? `
-        <div style="background:#fff; border:2px solid #111; padding:12px; margin:16px 0;">
-          <div style="font-size: 10px; text-transform: uppercase; color:#666; margin-bottom: 6px;">Note from ${opts.buyerEmail ?? "your secret benefactor"}</div>
-          <div style="font-size: 14px; white-space: pre-wrap;">${escapeHtml(opts.note)}</div>
-        </div>` : ""}
-      <p style="font-size: 14px;">
-        Read it, sit with it, photosynthesize accordingly:<br/>
-        <a href="https://ivibecodedworldpeace.com/open-source" style="color:#FF6B1A; font-weight:700;">→ ivibecodedworldpeace.com/open-source</a>
-      </p>
-      <p style="font-size: 11px; color:#666; margin-top: 24px;">There will be snacks. — Spike 🪴</p>
-    </div>
-  `;
-
-  const r = await fetch("https://api.resend.com/emails", {
+  const r = await fetch(`${SUPABASE_URL}/functions/v1/send-transactional-email`, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${RESEND_API_KEY}`,
+      Authorization: `Bearer ${SERVICE_KEY}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "World Peace <onboarding@resend.dev>",
-      to: [opts.to],
-      subject: "Someone vibe-coded world peace at you 🕊️",
-      html,
+      templateName: "gift_prompt",
+      to: opts.to,
+      idempotencyKey: `gift:${opts.sessionId}`,
+      purpose: "transactional",
+      templateData: {
+        buyerEmail: opts.buyerEmail ?? null,
+        note: opts.note,
+      },
     }),
   });
-
   if (!r.ok) {
     const t = await r.text();
-    console.error("resend send failed", r.status, t);
+    console.error("send-transactional-email failed", r.status, t);
   }
-}
-
-function escapeHtml(s: string) {
-  return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 }
 
 serve(async (req) => {
@@ -118,6 +93,7 @@ serve(async (req) => {
           to: giftEmail,
           note: giftNote,
           buyerEmail: session.customer_details?.email,
+          sessionId: session.id,
         });
       }
     }
