@@ -76,6 +76,7 @@ function Clouds() {
 
 function Globe({ onPet }: { onPet: () => void }) {
   const ref = useRef<THREE.Mesh>(null!);
+  const pointerDown = useRef<{ x: number; y: number } | null>(null);
   const [hovered, setHovered] = useState(false);
 
   useFrame((_, dt) => { if (ref.current) ref.current.rotation.y += dt * 0.12; });
@@ -84,8 +85,19 @@ function Globe({ onPet }: { onPet: () => void }) {
     <group
       onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
-      onClick={(e) => {
+      onPointerDown={(e) => {
         e.stopPropagation();
+        pointerDown.current = { x: e.clientX, y: e.clientY };
+      }}
+      onPointerUp={(e) => {
+        e.stopPropagation();
+        const start = pointerDown.current;
+        pointerDown.current = null;
+        if (!start) return;
+
+        const moved = Math.hypot(e.clientX - start.x, e.clientY - start.y);
+        if (moved > 8) return;
+
         if (ref.current) ref.current.rotation.y += 0.6;
         onPet();
       }}
@@ -318,6 +330,7 @@ function Scene({ onPet }: { onPet: () => void }) {
 
 export const Globe3D = () => {
   const [pets, setPets] = useState<number | null>(null);
+  const [burstKey, setBurstKey] = useState(0);
 
   const fetchCount = useCallback(async () => {
     try {
@@ -332,15 +345,21 @@ export const Globe3D = () => {
   useEffect(() => { fetchCount(); }, [fetchCount]);
 
   const handlePet = useCallback(async () => {
+    setPets((p) => (p ?? 0) + 1);
+
     try {
       const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/increment-globe`, {
         method: "POST",
         headers: { Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`, apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY },
       });
+
+      if (!res.ok) throw new Error("increment-globe failed");
+
       const { count } = await res.json();
       setPets(Number(count));
+      setBurstKey((key) => key + 1);
     } catch {
-      setPets((p) => (p ?? 0) + 1);
+      // Keep the optimistic local +1 so the joke still lands if Supabase hiccups.
     }
   }, []);
 
@@ -363,6 +382,11 @@ export const Globe3D = () => {
       <div className="absolute bottom-3 left-3 official-border bg-card px-3 py-2 official-shadow-sm">
         <p className="text-xs font-mono uppercase">
           🌍 TIMES PEOPLE TOUCHED MY GLOBE: <span className="font-display text-primary">{pets ?? "…"}</span>
+          {burstKey > 0 && (
+            <span key={burstKey} className="pointer-events-none absolute -top-3 right-3 animate-ping font-display text-primary">
+              +1
+            </span>
+          )}
         </p>
          <p className="text-[10px] font-mono text-muted-foreground">drag · click · planes shoot peaceful flower lasers</p>
       </div>

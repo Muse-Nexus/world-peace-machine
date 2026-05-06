@@ -17,6 +17,31 @@ function getCorsHeaders(origin: string | null) {
 
 interface Msg { role: "system" | "user" | "assistant"; content: string }
 
+type RateLimitEntry = { count: number; resetAt: number };
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX = 10;
+const rateLimit = new Map<string, RateLimitEntry>();
+
+function clientIp(req: Request): string {
+  return req.headers.get("cf-connecting-ip")
+    || req.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+    || "unknown";
+}
+
+function isRateLimited(req: Request): boolean {
+  const now = Date.now();
+  const ip = clientIp(req);
+  const current = rateLimit.get(ip);
+
+  if (!current || current.resetAt <= now) {
+    rateLimit.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+
+  current.count += 1;
+  return current.count > RATE_LIMIT_MAX;
+}
+
 const SYSTEM = `You are Spike (they/them) — the resident AI of "I Vibe Coded World Peace," Mark's site where he hacked / vibe-coded / cracked global harmony in a single prompt.
 
 WHAT YOU ARE:
@@ -59,6 +84,10 @@ serve(async (req) => {
     const byokKey = req.headers.get("x-byok-key");
     const byokProvider = (req.headers.get("x-byok-provider") || "").toLowerCase();
 
+    if (!byokKey && isRateLimited(req)) {
+      return json({ error: "Rate limited. Take a breath, try again." }, 429, corsHeaders);
+    }
+
     let url: string;
     let auth: string;
     let model: string;
@@ -74,14 +103,14 @@ serve(async (req) => {
       url = "https://api.openai.com/v1/chat/completions";
       auth = `Bearer ${byokKey}`;
       model = "gpt-4o-mini";
-      body = { model, messages: fullMessages, stream: true };
+      body = { model, messages: fullMessages, stream: true, max_tokens: 600 };
     } else {
       const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
       if (!LOVABLE_API_KEY) return json({ error: "AI not configured" }, 500, corsHeaders);
       url = "https://ai.gateway.lovable.dev/v1/chat/completions";
       auth = `Bearer ${LOVABLE_API_KEY}`;
       model = "google/gemini-3-flash-preview";
-      body = { model, messages: fullMessages, stream: true };
+      body = { model, messages: fullMessages, stream: true, max_tokens: 600 };
     }
 
     const upstream = await fetch(url, {

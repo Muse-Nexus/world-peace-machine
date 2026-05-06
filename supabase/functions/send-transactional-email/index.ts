@@ -30,9 +30,22 @@ function generateToken(): string {
     .join('')
 }
 
-// Auth note: this function uses verify_jwt = true in config.toml, so Supabase's
-// gateway validates the caller's JWT (anon or service_role) before the request
-// reaches this code. No in-function auth check is needed.
+function getJwtRole(authHeader: string): string | null {
+  const token = authHeader.replace(/^Bearer\s+/i, '')
+  const [, payload] = token.split('.')
+
+  if (!payload) return null
+
+  try {
+    const normalized = payload.replace(/-/g, '+').replace(/_/g, '/')
+    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=')
+    const claims = JSON.parse(atob(padded))
+    return typeof claims.role === 'string' ? claims.role : null
+  } catch {
+    return null
+  }
+}
+
 
 Deno.serve(async (req) => {
   // Handle CORS preflight
@@ -41,14 +54,13 @@ Deno.serve(async (req) => {
   }
 
 
-  // Only callable by stripe-webhook or server-side code (service_role key required)
-  const authHeader = req.headers.get('Authorization') || '';
-  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
-  if (!authHeader.includes(serviceKey) || !serviceKey) {
+  // Only callable by stripe-webhook or server-side code with a service_role JWT.
+  const authHeader = req.headers.get('Authorization') || ''
+  if (getJwtRole(authHeader) !== 'service_role') {
     return new Response(JSON.stringify({ error: 'Forbidden' }), {
       status: 403,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    })
   }
   const supabaseUrl = Deno.env.get('SUPABASE_URL')
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
