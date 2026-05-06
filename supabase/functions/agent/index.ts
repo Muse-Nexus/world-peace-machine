@@ -32,6 +32,12 @@ function clientIp(req: Request): string {
   if (rateLimit.size > RATE_LIMIT_MAX_ENTRIES) {
     for (const [key, value] of rateLimit) {
       if (value.resetAt <= now) rateLimit.delete(key);
+  const current = rateLimit.get(ip);
+
+  if (!current || current.resetAt <= now) {
+  if (rateLimit.size > RATE_LIMIT_MAX_ENTRIES) {
+    for (const [key, value] of rateLimit) {
+      if (value.resetAt <= now) rateLimit.delete(key);
     }
     while (rateLimit.size > RATE_LIMIT_MAX_ENTRIES) {
       const oldestKey = rateLimit.keys().next().value;
@@ -40,12 +46,6 @@ function clientIp(req: Request): string {
     }
   }
 
-function isRateLimited(req: Request): boolean {
-  const now = Date.now();
-  const ip = clientIp(req);
-  const current = rateLimit.get(ip);
-
-  if (!current || current.resetAt <= now) {
     rateLimit.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
     return false;
   }
