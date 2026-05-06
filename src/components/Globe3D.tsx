@@ -326,7 +326,7 @@ export const Globe3D = () => {
       });
       const [row] = await res.json();
       if (row) setPets(Number(row.count));
-    } catch {}
+    } catch (_e) { /* silent — count just stays at "…" */ }
   }, []);
 
   useEffect(() => { fetchCount(); }, [fetchCount]);
