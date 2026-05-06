@@ -7,21 +7,28 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
 
-  const supabase = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-  );
+  try {
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
 
-  const { data, error } = await supabase.rpc("increment_globe_touches");
+    const { data, error } = await supabase.rpc("increment_globe_touches");
 
-  if (error) return new Response(JSON.stringify({ error: error.message }), {
-    status: 500,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
+    if (error) throw error;
 
-  return new Response(JSON.stringify({ count: data }), {
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
+    return new Response(JSON.stringify({ count: data }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 200,
+    });
+  } catch (err) {
+    return new Response(JSON.stringify({ error: err.message }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500,
+    });
+  }
 });
