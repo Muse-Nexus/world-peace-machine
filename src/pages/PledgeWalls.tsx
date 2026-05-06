@@ -18,11 +18,13 @@ const PledgeWall = ({ category, title, kicker, color }: { category: "no-nukes" |
   const [body, setBody] = useState("");
   const [busy, setBusy] = useState(false);
 
-  const load = async () => {
-    const { data } = await supabase.from("pledges").select("*").eq("category", category).order("created_at", { ascending: false }).limit(50);
-    if (data) setPledges(data as Pledge[]);
-  };
-  useEffect(() => { load(); }, [category]);
+  useEffect(() => {
+    const load = async () => {
+      const { data } = await supabase.from("pledges").select("*").eq("category", category).order("created_at", { ascending: false }).limit(50);
+      if (data) setPledges(data as Pledge[]);
+    };
+    load();
+  }, [category]);
 
   const submit = async () => {
     const parsed = schema.safeParse({ body });
