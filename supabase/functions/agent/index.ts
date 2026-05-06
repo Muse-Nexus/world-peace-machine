@@ -20,13 +20,25 @@ interface Msg { role: "system" | "user" | "assistant"; content: string }
 type RateLimitEntry = { count: number; resetAt: number };
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX = 10;
+const RATE_LIMIT_MAX_ENTRIES = 1_000;
 const rateLimit = new Map<string, RateLimitEntry>();
 
 function clientIp(req: Request): string {
-  return req.headers.get("cf-connecting-ip")
+  return req.headers.get("cf-connecting-ip") ?? req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
     || req.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
     || "unknown";
 }
+
+  if (rateLimit.size > RATE_LIMIT_MAX_ENTRIES) {
+    for (const [key, value] of rateLimit) {
+      if (value.resetAt <= now) rateLimit.delete(key);
+    }
+    while (rateLimit.size > RATE_LIMIT_MAX_ENTRIES) {
+      const oldestKey = rateLimit.keys().next().value;
+      if (!oldestKey) break;
+      rateLimit.delete(oldestKey);
+    }
+  }
 
 function isRateLimited(req: Request): boolean {
   const now = Date.now();
