@@ -14,16 +14,29 @@ interface Neighbor {
 const Neighbors = () => {
   const [list, setList] = useState<Neighbor[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isPrivate, setIsPrivate] = useState(false);
 
   useEffect(() => {
-    supabase
-      .from("neighbors")
-      .select("*")
-      .order("avoid", { ascending: true })
-      .then(({ data }) => {
-        if (data) setList(data as Neighbor[]);
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) {
+        setIsPrivate(true);
         setLoading(false);
-      });
+        return;
+      }
+
+      supabase
+        .from("neighbors")
+        .select("*")
+        .order("avoid", { ascending: true })
+        .then(({ data, error }) => {
+          if (error) {
+            setIsPrivate(true);
+          } else if (data) {
+            setList(data as Neighbor[]);
+          }
+          setLoading(false);
+        });
+    });
   }, []);
 
   return (
@@ -50,6 +63,14 @@ const Neighbors = () => {
 
         {loading ? (
           <p className="mt-12 font-mono text-muted-foreground">Loading the cul-de-sac…</p>
+        ) : isPrivate ? (
+          <div className="mt-10 official-border bg-card p-8 official-shadow max-w-2xl">
+            <p className="font-display uppercase text-2xl">This room is private.</p>
+            <p className="font-mono text-sm mt-3 text-muted-foreground">
+              The neighbor field report contains notes about actual humans, so it stays behind the tiny velvet rope.
+              World peace is public. The cul-de-sac dossier is not.
+            </p>
+          </div>
         ) : (
           <div className="mt-10 grid md:grid-cols-2 gap-4">
             {list.map((n) => (
