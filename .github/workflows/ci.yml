@@ -5,6 +5,10 @@ on:
   push:
     branches:
       - main
+      - 'agentos/**'
+      - 'feat/**'
+      - 'fix/**'
+      - 'chore/**'
 
 jobs:
   app:
@@ -12,25 +16,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
         with:
-          bun-version: latest
+          node-version: 20
+          cache: npm
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: npm ci
 
       - name: Verify env example
-        run: bun run verify:env
+        run: npm run verify:env
 
       - name: Lint
-        run: bun run lint
+        run: npm run lint
 
       - name: Test
-        run: bun run test
+        run: npm run test
 
       - name: Build
-        run: bun run build
+        run: npm run build
