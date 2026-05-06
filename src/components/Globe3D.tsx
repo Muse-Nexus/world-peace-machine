@@ -95,9 +95,7 @@ function Globe({ onPet }: { onPet: () => void }) {
         pointerDown.current = null;
         if (!start) return;
 
-        const moved = Math.hypot(e.clientX - start.x, e.clientY - start.y);
-        if (moved > 8) return;
-
+        // Drags count too — any interaction with the globe is a pet.
         if (ref.current) ref.current.rotation.y += 0.6;
         onPet();
       }}
