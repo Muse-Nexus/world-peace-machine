@@ -31,7 +31,16 @@ bun install
 bun run dev
 ```
 
-You'll need a `.env` with the Supabase URL + publishable key (auto-populated when you connect a Lovable Cloud / Supabase project) and the relevant edge-function secrets (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `RESEND_API_KEY`, `LOVABLE_API_KEY`).
+You'll need a `.env` with the Supabase URL + publishable key (auto-populated when you connect a Lovable Cloud / Supabase project). Start from the checked-in example:
+
+```bash
+cp .env.example .env
+bun install
+bun run verify:env
+bun run build
+```
+
+Edge-function secrets live in Lovable/Supabase, not browser code: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `RESEND_API_KEY`, `LOVABLE_API_KEY`, and Supabase service credentials. Production is hosted on Lovable Cloud at `https://ivibecodedworldpeace.com`; keep checkout redirect origins explicit in `CHECKOUT_ALLOWED_ORIGINS`.
 
 ## Edge functions
 
