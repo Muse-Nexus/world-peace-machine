@@ -1,4 +1,4 @@
-import { Suspense, useMemo, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Stars, Html, Sphere, Text } from "@react-three/drei";
 import * as THREE from "three";
@@ -317,13 +317,38 @@ function Scene({ onPet }: { onPet: () => void }) {
 }
 
 export const Globe3D = () => {
-  const [pets, setPets] = useState(0);
+  const [pets, setPets] = useState<number | null>(null);
+
+  const fetchCount = useCallback(async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/globe_touches?select=count&id=eq.1`, {
+        headers: { apikey: import.meta.env.VITE_SUPABASE_ANON_KEY, Accept: "application/json" },
+      });
+      const [row] = await res.json();
+      if (row) setPets(Number(row.count));
+    } catch {}
+  }, []);
+
+  useEffect(() => { fetchCount(); }, [fetchCount]);
+
+  const handlePet = useCallback(async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/increment-globe`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}` },
+      });
+      const { count } = await res.json();
+      setPets(Number(count));
+    } catch {
+      setPets((p) => (p ?? 0) + 1);
+    }
+  }, []);
 
   return (
     <div className="relative w-full h-full">
       <Canvas camera={{ position: [0, 0.5, 5.5], fov: 55 }} dpr={[1, 2]}>
         <Suspense fallback={<Html center><p className="font-mono text-foreground">loading peace…</p></Html>}>
-          <Scene onPet={() => setPets((p) => p + 1)} />
+          <Scene onPet={handlePet} />
           <OrbitControls
             enablePan={false}
             enableZoom={false}
@@ -337,7 +362,7 @@ export const Globe3D = () => {
 
       <div className="absolute bottom-3 left-3 official-border bg-card px-3 py-2 official-shadow-sm">
         <p className="text-xs font-mono uppercase">
-          🌍 TIMES PEOPLE TOUCHED MY GLOBE: <span className="font-display text-primary">{pets}</span>
+          🌍 TIMES PEOPLE TOUCHED MY GLOBE: <span className="font-display text-primary">{pets ?? "…"}</span>
         </p>
          <p className="text-[10px] font-mono text-muted-foreground">drag · click · planes shoot peaceful flower lasers</p>
       </div>
