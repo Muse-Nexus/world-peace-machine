@@ -68,6 +68,21 @@ export type Database = {
         }
         Relationships: []
       }
+      globe_touches: {
+        Row: {
+          count: number
+          id: number
+        }
+        Insert: {
+          count?: number
+          id?: number
+        }
+        Update: {
+          count?: number
+          id?: number
+        }
+        Relationships: []
+      }
       neighbors: {
         Row: {
           avoid: boolean
@@ -238,7 +253,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      increment_globe_touches: { Args: never; Returns: number }
     }
     Enums: {
       [_ in never]: never
