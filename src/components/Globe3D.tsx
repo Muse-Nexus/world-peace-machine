@@ -322,7 +322,7 @@ export const Globe3D = () => {
   const fetchCount = useCallback(async () => {
     try {
       const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/globe_touches?select=count&id=eq.1`, {
-        headers: { apikey: import.meta.env.VITE_SUPABASE_ANON_KEY, Accept: "application/json" },
+        headers: { apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`, Accept: "application/json" },
       });
       const [row] = await res.json();
       if (row) setPets(Number(row.count));
@@ -335,7 +335,7 @@ export const Globe3D = () => {
     try {
       const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/increment-globe`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}` },
+        headers: { Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`, apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY },
       });
       const { count } = await res.json();
       setPets(Number(count));
