@@ -40,6 +40,16 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders })
   }
 
+
+  // Only callable by stripe-webhook or server-side code (service_role key required)
+  const authHeader = req.headers.get('Authorization') || '';
+  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+  if (!authHeader.includes(serviceKey) || !serviceKey) {
+    return new Response(JSON.stringify({ error: 'Forbidden' }), {
+      status: 403,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
   const supabaseUrl = Deno.env.get('SUPABASE_URL')
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 
