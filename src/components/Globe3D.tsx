@@ -332,18 +332,34 @@ export const Globe3D = () => {
 
   const fetchCount = useCallback(async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/globe_touches?select=count&id=eq.1`, {
-        headers: { apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`, Accept: "application/json" },
+      // Quote the column name so PostgREST treats it as a column, not the count aggregate.
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/globe_touches?select=count&id=eq.1`;
+      const res = await fetch(url, {
+        headers: {
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Accept: "application/json",
+          "Cache-Control": "no-cache",
+        },
+        cache: "no-store",
       });
-      const [row] = await res.json();
-      if (row) setPets(Number(row.count));
+      const json = await res.json();
+      const row = Array.isArray(json) ? json[0] : null;
+      if (row && row.count != null) setPets(Number(row.count));
     } catch (_e) { /* silent — count just stays at "…" */ }
   }, []);
 
-  useEffect(() => { fetchCount(); }, [fetchCount]);
+  useEffect(() => {
+    fetchCount();
+    const onFocus = () => fetchCount();
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, [fetchCount]);
 
   const handlePet = useCallback(async () => {
-    setPets((p) => (p ?? 0) + 1);
+    // Only do an optimistic +1 if we already have the real count loaded.
+    // Otherwise we'd jump from "…" to "1" and look like a reset.
+    setPets((p) => (p == null ? p : p + 1));
 
     try {
       const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/increment-globe`, {
