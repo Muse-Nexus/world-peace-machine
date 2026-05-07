@@ -1,32 +1,48 @@
-# Why prod shows only the background
+## What I found searching online
 
-`src/lib/env.ts` runs `z.parse(import.meta.env)` at module load. If `VITE_SUPABASE_URL` / `VITE_SUPABASE_PUBLISHABLE_KEY` are missing at build time, the parse throws synchronously inside `src/integrations/supabase/client.ts`, which is imported by `App.tsx` → React never mounts → you see only the body grid.
+Per Lovable's own docs and FAQ, **OG image / social metadata is controlled in two places** in a Lovable project, and they can fight each other:
 
-I confirmed by grepping the live prod bundle (`/assets/index-DkRNBY_q.js`):
-- No `tlvwdbasmywacxijfnnu` string anywhere
-- Zod schema is present but the values were never inlined
+1. **`index.html`** — the `<meta property="og:*">` tags we hand-wrote (currently pointing at `/og-image.png?v=2`).
+2. **Project Settings → Site Metadata** (in the Publish dialog) — Lovable's built-in panel for favicon, title, description, **and OG image upload**. When set, Lovable's hosting layer can inject/override these on the published site.
 
-So the **published build is stale** (built before .env was populated), or that build was created in an environment where the vars weren't exposed to Vite. Preview works because the sandbox has them.
+The most common Lovable-specific failure modes (from the docs + community fix guides):
 
-# Fix (two parts)
+- **Stale `<head>` from a prior publish.** Frontend changes only go live after you click **Publish → Update** in the Lovable publish dialog. Edits to `index.html` saved in the editor are NOT live until you re-publish. (Backend deploys auto; frontend does not.)
+- **Site Metadata panel empty or pointing to a different image** than `index.html`, so the deployed HTML doesn't match what we see in the source.
+- **Scraper caches.** FB/LinkedIn/X each cache the first scrape for days. Fixing the HTML doesn't refresh them — you have to force a re-scrape per platform.
+- **Image needs to be a real absolute URL, ≥1200×630, publicly fetchable, and < ~5MB.** A 404 or oversized image causes silent failure.
 
-## 1. Republish (you, one click)
-Click **Publish → Update** in the top right. The new build will inline the current .env values. That alone unsticks production.
+## Plan
 
-## 2. Harden so this can never blank the site again
-Two small code changes, no behavior change when env is healthy:
+### 1. Verify what's actually deployed (read-only check first)
+- Fetch `https://ivibecodedworldpeace.com/` with a Facebook-scraper user agent and dump the `<head>` to confirm the live HTML matches our repo's `index.html`.
+- Fetch `https://ivibecodedworldpeace.com/og-image.png?v=2` directly to confirm 200 OK, correct content-type, and dimensions 1200×630.
 
-- **`src/lib/env.ts`** — wrap parse in try/catch. On failure, log a loud console error and return a typed object with empty strings. Do NOT throw at import time.
-- **`src/integrations/supabase/client.ts`** — if either value is empty, log an error and create the client with placeholders so the import doesn't crash. Calls will fail individually (graceful) instead of taking down the whole app.
-- **`src/main.tsx`** — wrap `createRoot().render(<App/>)` in a try/catch that, on failure, paints a minimal brutalist fallback into `#root` ("something broke. snacks still legal tender.") so the user never sees a fully blank page again.
+### 2. Reconcile Lovable's Site Metadata panel
+- Ask you to open **Publish → Site Metadata** (or Project Settings → Site Metadata) and either:
+  - (a) **upload the same `og-image.png`** there so Lovable's injected tags match our hand-written ones, OR
+  - (b) **clear** that panel entirely so only our `index.html` tags are used.
+- I'll tell you which to do based on what step 1 reveals.
 
-Optional but cheap:
-- Add a tiny build-time guard in `vite.config.ts` `define` block to surface `import.meta.env.VITE_SUPABASE_URL` presence as a warning during `vite build` (just a console.warn from a plugin hook). Skip if you'd rather keep it lean.
+### 3. Re-publish
+- Click **Publish → Update** in the Lovable publish dialog. Without this, none of the `index.html` edits from the last few rounds are actually live on `ivibecodedworldpeace.com`.
 
-# Files touched
-- `src/lib/env.ts` — non-throwing parse
-- `src/integrations/supabase/client.ts` — graceful fallback
-- `src/main.tsx` — render-level error boundary fallback
+### 4. Harden the tags (small code edit)
+- Add `og:site_name`, `og:locale`, and a `?v=3` cache-bust to force a fresh fetch.
+- Confirm `og:image` uses absolute https URL (already does).
 
-# After the code change
-You still need to click **Publish → Update** once to push both the env values and the hardening to prod. After that, future stale builds will at least render *something* instead of a blank page.
+### 5. Force scraper cache refresh
+- Facebook: https://developers.facebook.com/tools/debug/ → enter URL → **Scrape Again** (twice).
+- LinkedIn: https://www.linkedin.com/post-inspector/ → Inspect.
+- X/Twitter: post a test tweet (their validator is dead); X will re-fetch on first share.
+- iMessage/WhatsApp cache per-device — test from a fresh contact thread.
+
+## Technical details
+
+- Lovable serves a SPA; `<head>` from `index.html` IS in the initial HTML response (good — scrapers don't run JS, and ours don't need to).
+- Lovable hosting sits behind Cloudflare; intermittent 403s on `facebookexternalhit` are real but not the primary suspect once we confirm the deployed HTML.
+- The two-source-of-truth issue (Site Metadata panel vs. `index.html`) is the most likely culprit given iMessage works but FB/LinkedIn don't — iMessage is more forgiving and may be reading our tags while FB sees Lovable's injected/empty ones.
+
+## Deliverable
+
+After you approve, I'll: run the live `<head>` diff, tell you exactly what to set/clear in the Site Metadata panel, bump the cache-bust to `?v=3`, and give you the three debugger links to click.
