@@ -12,7 +12,8 @@ import { supabase } from "@/integrations/supabase/client";
 type ItemKey =
   | "prompt" | "gift"
   | "tip_1" | "tip_3" | "tip_7" | "tip_12" | "tip_24"
-  | "sub_1" | "sub_3" | "sub_7" | "sub_12" | "sub_24";
+  | "sub_1" | "sub_3" | "sub_7" | "sub_12" | "sub_24"
+  | "custom";
 
 const tiers: { amt: 1 | 3 | 7 | 12 | 24; label: string; shame: string }[] = [
   { amt: 1, label: "$1", shame: "respectfully — that won't even cover the snacks Mark ate while typing the prompt." },
