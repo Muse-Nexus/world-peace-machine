@@ -27,8 +27,9 @@ const Shop = () => {
   const [giftOpen, setGiftOpen] = useState(false);
   const [giftEmail, setGiftEmail] = useState("");
   const [giftNote, setGiftNote] = useState("");
+  const [customAmount, setCustomAmount] = useState("");
 
-  async function startCheckout(item: ItemKey, extra?: { gift_recipient_email?: string; gift_note?: string }) {
+  async function startCheckout(item: ItemKey, extra?: { gift_recipient_email?: string; gift_note?: string; custom_amount_cents?: number }) {
     try {
       setBusy(item);
       const { data, error } = await supabase.functions.invoke("create-checkout", {
@@ -59,6 +60,21 @@ const Shop = () => {
     }
     setGiftOpen(false);
     startCheckout("gift", { gift_recipient_email: email, gift_note: giftNote.trim() || undefined });
+  }
+
+  function submitCustom(e: React.FormEvent) {
+    e.preventDefault();
+    const dollars = parseFloat(customAmount);
+    if (isNaN(dollars) || dollars < 1) {
+      toast.error("Minimum $1 please");
+      return;
+    }
+    if (dollars > 10000) {
+      toast.error("okay we love you but that's too much");
+      return;
+    }
+    const cents = Math.round(dollars * 100);
+    startCheckout("custom", { custom_amount_cents: cents });
   }
 
   return (
@@ -168,6 +184,45 @@ empathetic. currency is SNACKS —
                 </div>
               );
             })}
+          </div>
+
+          {/* SHUT UP AND TAKE MY MONEY */}
+          <div className="mt-6 brutal-border brutal-shadow bg-card p-6 border-4">
+            <div className="flex items-start gap-4">
+              <span className="text-4xl">🫳💸</span>
+              <div className="flex-1">
+                <p className="font-display uppercase text-2xl md:text-3xl text-primary">Shut Up and Take My Money</p>
+                <p className="font-mono text-sm mt-1 text-foreground/80">
+                  No tier. No shame. No ceiling. You decide what world peace is worth to you.
+                </p>
+                <form onSubmit={submitCustom} className="mt-4 flex gap-3 items-end flex-wrap">
+                  <div>
+                    <Label htmlFor="customAmount" className="font-mono text-xs uppercase">Your amount ($)</Label>
+                    <div className="relative mt-1">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">$</span>
+                      <Input
+                        id="customAmount"
+                        type="number"
+                        min="1"
+                        max="10000"
+                        step="1"
+                        placeholder="69"
+                        value={customAmount}
+                        onChange={(e) => setCustomAmount(e.target.value)}
+                        className="brutal-border font-mono pl-7 w-36"
+                      />
+                    </div>
+                  </div>
+                  <Button
+                    type="submit"
+                    disabled={busy !== null}
+                    className="brutal-border bg-primary text-primary-foreground font-display uppercase text-sm"
+                  >
+                    {busy === "custom" ? "…" : "Take It"}
+                  </Button>
+                </form>
+              </div>
+            </div>
           </div>
 
           <p className="mt-6 text-xs font-mono text-muted-foreground">

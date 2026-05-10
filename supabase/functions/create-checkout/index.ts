@@ -29,8 +29,15 @@ const CATALOG: Record<ItemKey, { amount: number; mode: "payment" | "subscription
   sub_24: { amount: 2400, mode: "subscription", name: "Monthly $24" },
 };
 
+const ALL_ITEM_KEYS = new Set<string>([
+  "prompt", "gift",
+  "tip_1", "tip_3", "tip_7", "tip_12", "tip_24",
+  "sub_1", "sub_3", "sub_7", "sub_12", "sub_24",
+  "custom",
+]);
+
 function isItemKey(x: unknown): x is ItemKey {
-  return typeof x === "string" && x in CATALOG;
+  return typeof x === "string" && ALL_ITEM_KEYS.has(x);
 }
 
 function isEmail(s: unknown): s is string {
@@ -45,7 +52,7 @@ serve(async (req) => {
     if (!stripeKey) return json({ error: "Stripe not configured" }, 500);
 
     const body = await req.json().catch(() => ({}));
-    const { item, gift_recipient_email, gift_note, customer_email } = body ?? {};
+    const { item, gift_recipient_email, gift_note, customer_email, custom_amount_cents } = body ?? {};
 
     if (!isItemKey(item)) return json({ error: "Unknown item" }, 400);
     if (item === "gift") {
@@ -54,11 +61,17 @@ serve(async (req) => {
         return json({ error: "Gift note too long (max 500 chars)" }, 400);
       }
     }
+    if (item === "custom") {
+      const cents = Number(custom_amount_cents);
+      if (!Number.isInteger(cents) || cents < 100 || cents > 1_000_000) {
+        return json({ error: "Custom amount must be between $1 and $10,000" }, 400);
+      }
+    }
+
     if (customer_email && !isEmail(customer_email)) {
       return json({ error: "Invalid customer email" }, 400);
     }
 
-    const entry = CATALOG[item];
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
 
     // Optional: link to logged-in user via JWT
@@ -79,18 +92,34 @@ serve(async (req) => {
     // Hardcoded canonical origin to prevent open-redirect via attacker-controlled Origin/Referer headers
     const origin = "https://ivibecodedworldpeace.com";
 
+    // Resolve amount + mode
+    let amount: number;
+    let mode: "payment" | "subscription";
+    let name: string;
+
+    if (item === "custom") {
+      amount = Number(custom_amount_cents);
+      mode = "payment";
+      name = `Shut Up and Take My Money — ${(amount / 100).toFixed(2)}`;
+    } else {
+      const entry = CATALOG[item];
+      amount = entry.amount;
+      mode = entry.mode;
+      name = entry.name;
+    }
+
     const lineItems = [{
       price_data: {
         currency: "usd",
-        product_data: { name: entry.name },
-        unit_amount: entry.amount,
-        ...(entry.mode === "subscription" ? { recurring: { interval: "month" as const } } : {}),
+        product_data: { name },
+        unit_amount: amount,
+        ...(mode === "subscription" ? { recurring: { interval: "month" as const } } : {}),
       },
       quantity: 1,
     }];
 
     const session = await stripe.checkout.sessions.create({
-      mode: entry.mode,
+      mode,
       line_items: lineItems,
       success_url: `${origin}/shop/success?sid={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/shop/cancel`,
@@ -101,6 +130,7 @@ serve(async (req) => {
           gift_recipient_email: gift_recipient_email as string,
           gift_note: ((gift_note as string) ?? "").slice(0, 500),
         } : {}),
+        ...(item === "custom" ? { custom_amount_cents: String(amount) } : {}),
         ...(userId ? { user_id: userId } : {}),
       },
     });
@@ -113,8 +143,8 @@ serve(async (req) => {
     await admin.from("orders").insert({
       user_id: userId,
       item,
-      amount_cents: entry.amount,
-      mode: entry.mode,
+      amount_cents: amount,
+      mode,
       stripe_session_id: session.id,
       customer_email: customer_email ?? null,
       gift_recipient_email: item === "gift" ? gift_recipient_email : null,
