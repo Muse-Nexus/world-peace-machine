@@ -27,7 +27,7 @@ const Shop = () => {
   const [giftOpen, setGiftOpen] = useState(false);
   const [giftEmail, setGiftEmail] = useState("");
   const [giftNote, setGiftNote] = useState("");
-  const [customAmount, setCustomAmount] = useState("");
+  const [customAmount, setCustomAmount] = useState("69");
 
   async function startCheckout(item: ItemKey, extra?: { gift_recipient_email?: string; gift_note?: string; custom_amount_cents?: number }) {
     try {
