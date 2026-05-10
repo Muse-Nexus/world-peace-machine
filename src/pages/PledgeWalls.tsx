@@ -3,17 +3,14 @@ import { PageShell } from "@/components/PageShell";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
 
-interface Pledge { id: string; user_id: string; body: string; created_at: string; category: string }
+interface Pledge { id: string; user_id: string | null; body: string; created_at: string; category: string }
 
 const schema = z.object({ body: z.string().trim().min(3).max(280) });
 
 const PledgeWall = ({ category, title, kicker, color }: { category: "no-nukes" | "no-bickering"; title: string; kicker: string; color: string }) => {
-  const { user } = useAuth();
   const [pledges, setPledges] = useState<Pledge[]>([]);
   const [body, setBody] = useState("");
   const [busy, setBusy] = useState(false);
@@ -30,9 +27,8 @@ const PledgeWall = ({ category, title, kicker, color }: { category: "no-nukes" |
   const submit = async () => {
     const parsed = schema.safeParse({ body });
     if (!parsed.success) { toast.error("Pledges are 3–280 characters."); return; }
-    if (!user) { toast.error("Sign in to pledge — at /auth"); return; }
     setBusy(true);
-    const { error } = await supabase.from("pledges").insert({ body: parsed.data.body, category, user_id: user.id });
+    const { error } = await supabase.from("pledges").insert({ body: parsed.data.body, category });
     setBusy(false);
     if (error) { toast.error(error.message); return; }
     setBody("");
@@ -50,15 +46,10 @@ const PledgeWall = ({ category, title, kicker, color }: { category: "no-nukes" |
 
         <div className="mt-8 brutal-card">
           <p className="font-mono text-sm mb-2">Add your name to the wall. 280 chars. Be sincere or be funny — both work.</p>
-          {!user && (
-            <p className="text-xs font-mono text-muted-foreground mb-2">
-              You need to <Link to="/auth" className="underline">sign in</Link> to post. (We give you a welcome snack 🍿.)
-            </p>
-          )}
           <Textarea value={body} onChange={(e) => setBody(e.target.value)} maxLength={280} placeholder="I pledge…" className="brutal-border font-mono" />
           <div className="flex justify-between items-center mt-2">
             <span className="text-xs font-mono text-muted-foreground">{body.length}/280</span>
-            <Button onClick={submit} disabled={busy || !user} className="brutal-border bg-primary text-primary-foreground font-display uppercase">Post Pledge</Button>
+            <Button onClick={submit} disabled={busy} className="brutal-border bg-primary text-primary-foreground font-display uppercase">Post Pledge</Button>
           </div>
         </div>
 
