@@ -7,26 +7,24 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Server-side price catalog. NEVER trust client amounts.
 type ItemKey =
-  | "prompt"
-  | "gift"
-  | "tip_1" | "tip_3" | "tip_7" | "tip_12" | "tip_24"
-  | "sub_1" | "sub_3" | "sub_7" | "sub_12" | "sub_24";
+  | "prompt" | "gift" | "tip_1" | "tip_3" | "tip_7" | "tip_12" | "tip_24" | "custom"
+  | "sub_1"  | "sub_3" | "sub_7" | "sub_12" | "sub_24";
 
 const CATALOG: Record<ItemKey, { amount: number; mode: "payment" | "subscription"; name: string }> = {
-  prompt: { amount: 99, mode: "payment", name: "The Prompt" },
-  gift:   { amount: 199, mode: "payment", name: "Gift The Prompt" },
-  tip_1:  { amount: 100, mode: "payment", name: "One-time tip $1" },
-  tip_3:  { amount: 300, mode: "payment", name: "One-time tip $3" },
-  tip_7:  { amount: 700, mode: "payment", name: "One-time tip $7" },
-  tip_12: { amount: 1200, mode: "payment", name: "One-time tip $12" },
-  tip_24: { amount: 2400, mode: "payment", name: "One-time tip $24" },
-  sub_1:  { amount: 100, mode: "subscription", name: "Monthly $1" },
-  sub_3:  { amount: 300, mode: "subscription", name: "Monthly $3" },
-  sub_7:  { amount: 700, mode: "subscription", name: "Monthly $7" },
-  sub_12: { amount: 1200, mode: "subscription", name: "Monthly $12" },
-  sub_24: { amount: 2400, mode: "subscription", name: "Monthly $24" },
+  prompt: { amount: 99,   mode: "payment",       name: "The Prompt" },
+  gift:   { amount: 199,  mode: "payment",       name: "Gift The Prompt" },
+  tip_1:  { amount: 100,  mode: "payment",       name: "One-time tip $1" },
+  tip_3:  { amount: 300,  mode: "payment",       name: "One-time tip $3" },
+  tip_7:  { amount: 700,  mode: "payment",       name: "One-time tip $7" },
+  tip_12: { amount: 1200, mode: "payment",       name: "One-time tip $12" },
+  tip_24: { amount: 2400, mode: "payment",       name: "One-time tip $24" },
+  custom: { amount: 0,    mode: "payment",       name: "Shut Up and Take My Money" },
+  sub_1:  { amount: 100,  mode: "subscription",  name: "Monthly $1" },
+  sub_3:  { amount: 300,  mode: "subscription",  name: "Monthly $3" },
+  sub_7:  { amount: 700,  mode: "subscription",  name: "Monthly $7" },
+  sub_12: { amount: 1200, mode: "subscription",  name: "Monthly $12" },
+  sub_24: { amount: 2400, mode: "subscription",  name: "Monthly $24" },
 };
 
 function isItemKey(x: unknown): x is ItemKey {
@@ -45,9 +43,18 @@ serve(async (req) => {
     if (!stripeKey) return json({ error: "Stripe not configured" }, 500);
 
     const body = await req.json().catch(() => ({}));
-    const { item, gift_recipient_email, gift_note, customer_email } = body ?? {};
+    const { item, gift_recipient_email, gift_note, customer_email, custom_amount_cents } = body ?? {};
 
     if (!isItemKey(item)) return json({ error: "Unknown item" }, 400);
+
+    // Validate custom amount
+    if (item === "custom") {
+      const cents = Number(custom_amount_cents);
+      if (!Number.isInteger(cents) || cents < 100 || cents > 1000000) {
+        return json({ error: "Custom amount must be between $1 and $10,000" }, 400);
+      }
+    }
+
     if (item === "gift") {
       if (!isEmail(gift_recipient_email)) return json({ error: "Valid recipient email required" }, 400);
       if (gift_note && (typeof gift_note !== "string" || gift_note.length > 500)) {
@@ -59,9 +66,11 @@ serve(async (req) => {
     }
 
     const entry = CATALOG[item];
+    const resolvedAmount = item === "custom" ? Number(custom_amount_cents) : entry.amount;
+    const resolvedName = item === "custom" ? "Shut Up and Take My Money 💸" : entry.name;
+
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
 
-    // Optional: link to logged-in user via JWT
     let userId: string | null = null;
     const authHeader = req.headers.get("Authorization");
     if (authHeader?.startsWith("Bearer ")) {
@@ -76,14 +85,13 @@ serve(async (req) => {
       } catch (_) { /* anonymous is fine */ }
     }
 
-    // Hardcoded canonical origin to prevent open-redirect via attacker-controlled Origin/Referer headers
     const origin = "https://ivibecodedworldpeace.com";
 
     const lineItems = [{
       price_data: {
         currency: "usd",
-        product_data: { name: entry.name },
-        unit_amount: entry.amount,
+        product_data: { name: resolvedName },
+        unit_amount: resolvedAmount,
         ...(entry.mode === "subscription" ? { recurring: { interval: "month" as const } } : {}),
       },
       quantity: 1,
@@ -105,7 +113,6 @@ serve(async (req) => {
       },
     });
 
-    // Record pending order via service role
     const admin = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
@@ -113,7 +120,7 @@ serve(async (req) => {
     await admin.from("orders").insert({
       user_id: userId,
       item,
-      amount_cents: entry.amount,
+      amount_cents: resolvedAmount,
       mode: entry.mode,
       stripe_session_id: session.id,
       customer_email: customer_email ?? null,
