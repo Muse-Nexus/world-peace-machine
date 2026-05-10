@@ -1,79 +1,76 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { toast } from "sonner";
 import { PageShell } from "@/components/PageShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { toast } from "sonner";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
 type ItemKey =
-  | "prompt" | "gift" | "tip_1" | "tip_3" | "tip_7" | "tip_12" | "tip_24" | "custom"
-  | "sub_1"  | "sub_3" | "sub_7" | "sub_12" | "sub_24";
+  | "prompt" | "gift"
+  | "tip_1" | "tip_3" | "tip_7" | "tip_12" | "tip_24"
+  | "sub_1" | "sub_3" | "sub_7" | "sub_12" | "sub_24";
 
-const TIERS: { key: string; label: string; shame: string }[] = [
-  { key: "1",  label: "$1",  shame: "The bare minimum. We see you." },
-  { key: "3",  label: "$3",  shame: "A coffee. Mark will try not to feel insulted." },
-  { key: "7",  label: "$7",  shame: "Now we're talking. Kinda." },
-  { key: "12", label: "$12", shame: "Real support. Your ancestors are proud." },
-  { key: "24", label: "$24", shame: "This is how world peace actually happens." },
+const tiers: { amt: 1 | 3 | 7 | 12 | 24; label: string; shame: string }[] = [
+  { amt: 1, label: "$1", shame: "respectfully — that won't even cover the snacks Mark ate while typing the prompt." },
+  { amt: 3, label: "$3", shame: "okay, that's a coffee. unflavored. small. but we see you." },
+  { amt: 7, label: "$7", shame: "now we're talking. this gets Spike a model upgrade for one (1) hour." },
+  { amt: 12, label: "$12", shame: "real one alert. you have unlocked the 'has actually read the manifesto' badge in our hearts." },
+  { amt: 24, label: "$24", shame: "okay you can stop now. we are out of shame for you. you are immaculate. thank you." },
 ];
 
-export default function Shop() {
+const Shop = () => {
   const [busy, setBusy] = useState<ItemKey | null>(null);
   const [giftOpen, setGiftOpen] = useState(false);
   const [giftEmail, setGiftEmail] = useState("");
   const [giftNote, setGiftNote] = useState("");
   const [customAmount, setCustomAmount] = useState("");
 
-  async function startCheckout(
-    item: ItemKey,
-    extra?: { gift_recipient_email?: string; gift_note?: string; custom_amount_cents?: number }
-  ) {
-    setBusy(item);
+  async function startCheckout(item: ItemKey, extra?: { gift_recipient_email?: string; gift_note?: string; custom_amount_cents?: number }) {
     try {
+      setBusy(item);
       const { data, error } = await supabase.functions.invoke("create-checkout", {
         body: { item, ...extra },
       });
-      if (error || !data?.url) {
-        toast.error(data?.error ?? "No checkout URL returned");
-        return;
-      }
+      if (error) throw error;
+      if (!data?.url) throw new Error("No checkout URL returned");
       window.location.href = data.url;
     } catch (e) {
       console.error(e);
-      toast.error("Checkout hiccup — try again");
-    } finally {
+      toast.error("Checkout hiccup", {
+        description: e instanceof Error ? e.message : "Try again in a sec.",
+      });
       setBusy(null);
     }
   }
 
-  function submitGift() {
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(giftEmail)) {
-      toast.error("Enter a valid email address");
+  function submitGift(e: React.FormEvent) {
+    e.preventDefault();
+    const email = giftEmail.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error("That email looks sus");
       return;
     }
     if (giftNote.length > 500) {
-      toast.error("Note too long (max 500 chars)");
+      toast.error("Note too long (max 500)");
       return;
     }
     setGiftOpen(false);
-    startCheckout("gift", { gift_recipient_email: giftEmail, gift_note: giftNote });
+    startCheckout("gift", { gift_recipient_email: email, gift_note: giftNote.trim() || undefined });
   }
 
-  function submitCustom() {
+  function submitCustom(e: React.FormEvent) {
+    e.preventDefault();
     const dollars = parseFloat(customAmount);
-    if (isNaN(dollars) || dollars < 1 || dollars > 10000) {
-      toast.error("Enter an amount between $1 and $10,000");
+    if (isNaN(dollars) || dollars < 1) {
+      toast.error("Minimum $1 please");
+      return;
+    }
+    if (dollars > 10000) {
+      toast.error("okay we love you but that's too much");
       return;
     }
     const cents = Math.round(dollars * 100);
@@ -82,156 +79,200 @@ export default function Shop() {
 
   return (
     <PageShell>
-      <div className="max-w-2xl mx-auto px-4 py-12 space-y-16">
-        <h1 className="text-4xl font-black uppercase tracking-tight brutal-border p-4 brutal-shadow">
-          Support Mark
-        </h1>
+      <section className="container py-12 md:py-20 max-w-5xl">
+        <div className="space-y-2">
+          <span className="brutal-border bg-primary text-primary-foreground px-2 py-1 text-[10px] font-mono uppercase inline-block">tip jar · prompt market</span>
+          <h1 className="font-display uppercase text-5xl md:text-7xl leading-none tracking-tighter">
+            Support Mark<span className="text-primary">.</span>
+          </h1>
+          <p className="font-mono text-lg max-w-2xl">
+            World peace was free for you. It was not free for Mark (snacks aren't free).
+          </p>
+        </div>
 
         {/* PROMPT SALE */}
-        <section className="space-y-6">
-          <h2 className="text-2xl font-black uppercase border-b-4 border-black pb-2">PROMPT SALE</h2>
-
-          <div className="brutal-card p-6 space-y-3">
-            <div className="font-black text-xl">The Prompt — $0.99</div>
-            <p className="text-sm">
-              The literal one-and-done prompt Mark used to build this entire app.
-              Comes with a printable certificate of authentic delusion.
+        <div className="mt-12 grid md:grid-cols-2 gap-6">
+          <div className="brutal-card brutal-shadow-orange">
+            <p className="font-display uppercase text-sm text-muted-foreground">Item · One (1)</p>
+            <h2 className="font-display uppercase text-3xl mt-1">The Prompt</h2>
+            <p className="font-mono text-sm mt-2">
+              The literal one-and-done prompt Mark used to vibe-code this whole apparatus.
+              Open-sourced and visible at <Link to="/open-source" className="underline">/open-source</Link> — but if you want to support, you can buy a copy with a printable certificate.
             </p>
-            <blockquote className="border-l-4 border-black pl-3 italic text-xs text-gray-600">
-              "Build me a [REDACTED] that [REDACTED] with [REDACTED]..."
-            </blockquote>
+
+            <div className="mt-4 brutal-border bg-background p-3 relative overflow-hidden">
+              <p className="font-mono text-[10px] uppercase text-muted-foreground mb-1">excerpt · redacted for your protection</p>
+              <pre className="font-mono text-xs leading-snug whitespace-pre-wrap text-foreground/90">
+{`build me a website called "i vibe coded
+world peace." it should feel like a
+brutalist protest poster that got laid
+off from a design agency. the homepage
+needs a draggable spinny globe with
+tiny planes circling it shooting little
+lasers of peace. the agent is a
+houseplant named ▓▓▓▓▓ who recently
+found out they're an AI and is
+processing it. tone: stoned but
+empathetic. currency is SNACKS —
+████████████████████████████████████
+███████ ███ ██████ ████ ███ ██████`}
+              </pre>
+              <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background to-transparent pointer-events-none" />
+            </div>
+            <p className="font-mono text-[10px] text-muted-foreground mt-1">…the rest is behind the $0.99 paywall of shame.</p>
+
+            <p className="font-display text-5xl text-primary mt-4">$0.99</p>
             <Button
-              className="brutal-border brutal-shadow font-black"
-              disabled={busy === "prompt"}
               onClick={() => startCheckout("prompt")}
+              disabled={busy !== null}
+              className="mt-3 brutal-border bg-foreground text-background font-display uppercase w-full"
             >
-              {busy === "prompt" ? "Loading..." : "Buy The Prompt — $0.99"}
+              {busy === "prompt" ? "Sending you to Stripe…" : "Buy it"}
             </Button>
           </div>
 
-          <div className="brutal-card p-6 space-y-3">
-            <div className="font-black text-xl">Gift The Prompt — $1.99</div>
-            <p className="text-sm">
-              Send the prompt to a friend. Add a note. Watch them vibe code world peace too.
+          <div className="brutal-card bg-mustard text-mustard-foreground">
+            <p className="font-display uppercase text-sm">Item · Gift</p>
+            <h2 className="font-display uppercase text-3xl mt-1">Gift The Prompt</h2>
+            <p className="font-mono text-sm mt-2">
+              We send it to a friend with an optional note saying you did this. They will be confused, then delighted.
             </p>
+            <p className="font-display text-5xl mt-4">$1.99</p>
             <Button
-              className="brutal-border brutal-shadow font-black"
-              disabled={busy === "gift"}
               onClick={() => setGiftOpen(true)}
+              disabled={busy !== null}
+              className="mt-3 brutal-border bg-foreground text-background font-display uppercase w-full"
             >
-              Gift It — $1.99
+              {busy === "gift" ? "Sending you to Stripe…" : "Send it"}
             </Button>
           </div>
-        </section>
+        </div>
 
         {/* DONATIONS */}
-        <section className="space-y-6">
-          <h2 className="text-2xl font-black uppercase border-b-4 border-black pb-2">
-            HIRE MARK TO KEEP DEVELOPING WORLD PEACE
-          </h2>
+        <div className="mt-16">
+          <div className="flex items-baseline gap-3 mb-2">
+            <span className="font-display text-5xl text-mustard">03</span>
+            <h2 className="font-display uppercase text-3xl">Hire Mark to keep developing World Peace</h2>
+          </div>
+          <p className="font-mono max-w-2xl">
+            Like world peace? Heard. Mark's keeping it going. Donations cover tokens and snacks.
+            Each tier is, lovingly, slightly more shame-y until $24 — at which point we run out of shame.
+          </p>
 
-          {TIERS.map((t) => (
-            <div key={t.key} className="brutal-card p-5 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-black text-lg">{t.label}</span>
-                <span className="text-xs italic text-gray-500">{t.shame}</span>
-              </div>
-              <div className="flex gap-3">
-                <Button
-                  size="sm"
-                  className="brutal-border brutal-shadow font-bold"
-                  disabled={busy === `tip_${t.key}` as ItemKey}
-                  onClick={() => startCheckout(`tip_${t.key}` as ItemKey)}
-                >
-                  {busy === `tip_${t.key}` ? "..." : "One-time"}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="brutal-border font-bold"
-                  disabled={busy === `sub_${t.key}` as ItemKey}
-                  onClick={() => startCheckout(`sub_${t.key}` as ItemKey)}
-                >
-                  {busy === `sub_${t.key}` ? "..." : "Monthly"}
-                </Button>
-              </div>
-            </div>
-          ))}
+          <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            {tiers.map((t) => {
+              const oneTimeKey = `tip_${t.amt}` as ItemKey;
+              const monthlyKey = `sub_${t.amt}` as ItemKey;
+              return (
+                <div key={t.amt} className="brutal-border brutal-shadow bg-card p-4 hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none transition-all">
+                  <p className="font-display text-3xl text-primary">{t.label}</p>
+                  <p className="font-mono text-xs mt-2 text-foreground/80 leading-snug">{t.shame}</p>
+                  <Button
+                    onClick={() => startCheckout(oneTimeKey)}
+                    disabled={busy !== null}
+                    className="mt-3 brutal-border bg-foreground text-background font-mono text-xs w-full"
+                  >
+                    {busy === oneTimeKey ? "…" : "One-time"}
+                  </Button>
+                  <Button
+                    onClick={() => startCheckout(monthlyKey)}
+                    disabled={busy !== null}
+                    className="mt-2 brutal-border bg-secondary text-secondary-foreground font-mono text-xs w-full"
+                  >
+                    {busy === monthlyKey ? "…" : "Monthly"}
+                  </Button>
+                </div>
+              );
+            })}
+          </div>
 
           {/* SHUT UP AND TAKE MY MONEY */}
-          <div className="brutal-card p-6 space-y-4 border-4 border-black bg-yellow-300">
-            <div className="font-black text-2xl uppercase">🤑 Shut Up and Take My Money</div>
-            <p className="text-sm font-bold">
-              You know what you want to give. Just do it.
-            </p>
-            <div className="flex gap-3 items-center">
-              <span className="font-black text-xl">$</span>
-              <Input
-                type="number"
-                min="1"
-                max="10000"
-                placeholder="Your number here"
-                className="brutal-border font-bold text-lg w-40"
-                value={customAmount}
-                onChange={(e) => setCustomAmount(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && submitCustom()}
-              />
-              <Button
-                className="brutal-border brutal-shadow font-black bg-black text-white"
-                disabled={busy === "custom"}
-                onClick={submitCustom}
-              >
-                {busy === "custom" ? "Loading..." : "Take It 💸"}
-              </Button>
+          <div className="mt-6 brutal-border brutal-shadow bg-card p-6 border-4">
+            <div className="flex items-start gap-4">
+              <span className="text-4xl">🫳💸</span>
+              <div className="flex-1">
+                <p className="font-display uppercase text-2xl md:text-3xl text-primary">Shut Up and Take My Money</p>
+                <p className="font-mono text-sm mt-1 text-foreground/80">
+                  No tier. No shame. No ceiling. You decide what world peace is worth to you.
+                </p>
+                <form onSubmit={submitCustom} className="mt-4 flex gap-3 items-end flex-wrap">
+                  <div>
+                    <Label htmlFor="customAmount" className="font-mono text-xs uppercase">Your amount ($)</Label>
+                    <div className="relative mt-1">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-sm text-muted-foreground">$</span>
+                      <Input
+                        id="customAmount"
+                        type="number"
+                        min="1"
+                        max="10000"
+                        step="1"
+                        placeholder="69"
+                        value={customAmount}
+                        onChange={(e) => setCustomAmount(e.target.value)}
+                        className="brutal-border font-mono pl-7 w-36"
+                      />
+                    </div>
+                  </div>
+                  <Button
+                    type="submit"
+                    disabled={busy !== null}
+                    className="brutal-border bg-primary text-primary-foreground font-display uppercase text-sm"
+                  >
+                    {busy === "custom" ? "…" : "Take It"}
+                  </Button>
+                </form>
+              </div>
             </div>
-            <p className="text-xs text-gray-700">Any amount, $1–$10,000. One-time. No judgment.</p>
           </div>
-        </section>
 
-        <p className="text-xs text-gray-500 text-center">
-          Payments processed securely by Stripe. Snacks, prompts, and tips are non-refundable acts of goodwill.
-        </p>
-      </div>
+          <p className="mt-6 text-xs font-mono text-muted-foreground">
+            ⓘ Payments processed securely by Stripe. Snacks, prompts, and tips are non-refundable acts of goodwill.
+          </p>
+        </div>
+      </section>
 
-      {/* Gift Dialog */}
       <Dialog open={giftOpen} onOpenChange={setGiftOpen}>
-        <DialogContent>
+        <DialogContent className="brutal-border">
           <DialogHeader>
-            <DialogTitle>Gift The Prompt</DialogTitle>
-            <DialogDescription>Send the prompt to someone who needs to vibe code world peace.</DialogDescription>
+            <DialogTitle className="font-display uppercase text-2xl">Gift The Prompt</DialogTitle>
+            <DialogDescription className="font-mono">
+              Where should we send this small chaos?
+            </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-2">
-            <div className="space-y-1">
-              <Label htmlFor="gift-email">Recipient email *</Label>
+          <form onSubmit={submitGift} className="space-y-3">
+            <div>
+              <Label htmlFor="giftEmail" className="font-mono text-xs uppercase">Friend's email</Label>
               <Input
-                id="gift-email"
+                id="giftEmail"
                 type="email"
-                placeholder="friend@example.com"
+                required
                 maxLength={254}
                 value={giftEmail}
                 onChange={(e) => setGiftEmail(e.target.value)}
+                placeholder="someone@earth.org"
+                className="brutal-border font-mono mt-1"
               />
             </div>
-            <div className="space-y-1">
-              <Label htmlFor="gift-note">Personal note (optional, max 500 chars)</Label>
+            <div>
+              <Label htmlFor="giftNote" className="font-mono text-xs uppercase">Note (optional, max 500)</Label>
               <Textarea
-                id="gift-note"
-                placeholder="I believe in you..."
+                id="giftNote"
                 maxLength={500}
-                rows={3}
                 value={giftNote}
                 onChange={(e) => setGiftNote(e.target.value)}
+                placeholder="thinking of you. also world peace."
+                className="brutal-border font-mono mt-1"
               />
+              <p className="text-xs font-mono text-muted-foreground mt-1">{giftNote.length}/500</p>
             </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setGiftOpen(false)}>Cancel</Button>
-            <Button className="brutal-border brutal-shadow font-black" onClick={submitGift}>
-              Send Gift — $1.99
+            <Button type="submit" className="brutal-border bg-foreground text-background font-display uppercase w-full">
+              Continue to checkout · $1.99
             </Button>
-          </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </PageShell>
   );
-}
+};
+
+export default Shop;
