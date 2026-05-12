@@ -10,7 +10,7 @@ You may copy, fork, gift, fold into a paper crane, or yell into a canyon. Attrib
 
 const OpenSource = () => (
   <PageShell>
-    <section className="container py-12 md:py-20 max-w-4xl">
+    <section className="container py-20 md:py-28 max-w-4xl">
       <div className="space-y-2">
         <span className="brutal-border bg-secondary text-secondary-foreground px-2 py-1 text-[10px] font-mono uppercase inline-block">License · MIT-Peace</span>
         <h1 className="font-display uppercase text-5xl md:text-7xl leading-none tracking-tighter">The Prompt.</h1>

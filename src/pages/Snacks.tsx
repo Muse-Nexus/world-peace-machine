@@ -13,7 +13,7 @@ const market = [
 
 const Snacks = () => (
   <PageShell>
-    <section className="container py-12 md:py-20 max-w-5xl">
+    <section className="container py-20 md:py-28 max-w-5xl">
       <div className="grid md:grid-cols-2 gap-8 items-end">
         <div className="space-y-3">
           <span className="brutal-border bg-mustard text-mustard-foreground px-2 py-1 text-[10px] font-mono uppercase inline-block">The New Currency</span>

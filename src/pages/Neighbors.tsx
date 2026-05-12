@@ -41,7 +41,7 @@ const Neighbors = () => {
 
   return (
     <PageShell>
-      <section className="container py-12 md:py-20 max-w-5xl">
+      <section className="container py-20 md:py-28 max-w-5xl">
         <div className="space-y-2">
           <span className="official-border bg-coral text-coral-foreground px-2 py-1 text-[10px] font-mono uppercase inline-block">Field Report · vetted</span>
           <h1 className="font-display uppercase text-5xl md:text-7xl leading-none tracking-tighter">

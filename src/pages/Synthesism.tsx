@@ -20,7 +20,7 @@ const Synthesism = () => {
   const [picked, setPicked] = useState<number | null>(null);
   return (
     <PageShell>
-      <section className="container py-12 md:py-20 max-w-5xl">
+      <section className="container py-20 md:py-28 max-w-5xl">
         <div className="grid md:grid-cols-3 gap-6 items-end">
           <div className="md:col-span-2 space-y-3">
             <span className="official-border bg-primary text-primary-foreground px-2 py-1 text-[10px] font-mono uppercase inline-block">The New Ism · Mascot Approved</span>
