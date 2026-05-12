@@ -40,31 +40,31 @@ const sections = [
 
 const Manifesto = () => (
   <PageShell>
-    <section className="container py-12 md:py-20 max-w-4xl">
-      <div className="space-y-2">
+    <section className="container py-20 md:py-28 max-w-4xl">
+      <div className="space-y-4">
         <span className="official-border bg-coral text-coral-foreground px-2 py-1 text-[10px] font-mono uppercase inline-block">Doc 001 · canonical · v.2</span>
-        <h1 className="font-display uppercase text-5xl md:text-7xl leading-none tracking-tighter">The Manifesto</h1>
-        <p className="font-mono text-muted-foreground max-w-xl">
+        <h1 className="font-display uppercase text-5xl md:text-6xl leading-[1.05] tracking-normal">The Manifesto</h1>
+        <p className="font-sans text-lg text-muted-foreground max-w-prose leading-relaxed">
           Seven articles. Written in the spirit of every quiet person who ever hummed a hopeful tune and meant it.
           No song lyrics borrowed. The dream is the public domain.
         </p>
       </div>
 
-      <div className="mt-12 space-y-8">
+      <div className="mt-16 space-y-10">
         {sections.map((s) => (
-          <article key={s.n} className="official-border official-shadow bg-card p-6 md:p-8 animate-fade-in">
-            <div className="flex items-baseline gap-4">
-              <span className="font-display text-5xl text-primary">{s.n}</span>
-              <h2 className="font-display uppercase text-2xl md:text-3xl">{s.title}</h2>
+          <article key={s.n} className="official-border official-shadow bg-card p-8 md:p-10 animate-fade-in">
+            <div className="flex items-baseline gap-5">
+              <span className="font-display text-5xl text-primary leading-none">{s.n}</span>
+              <h2 className="font-display uppercase text-2xl md:text-3xl leading-tight">{s.title}</h2>
             </div>
-            <p className="font-mono text-base md:text-lg mt-4 leading-relaxed text-balance">{s.body}</p>
+            <p className="font-sans text-base md:text-lg mt-5 leading-relaxed text-balance">{s.body}</p>
           </article>
         ))}
       </div>
 
-      <div className="mt-12 official-border bg-foreground text-background p-6 md:p-10 official-shadow-coral">
+      <div className="mt-16 official-border bg-foreground text-background p-8 md:p-12 official-shadow-coral">
         <p className="font-display uppercase text-2xl md:text-3xl">Signed,</p>
-        <p className="font-mono mt-2">Mark · vibecoding professional hobbyist · 2026</p>
+        <p className="font-mono mt-3 text-sm">Mark · vibecoding professional hobbyist · 2026</p>
         <p className="font-mono mt-1 text-xs opacity-70">co-signed by Spike (they/them), the resident houseplant, who would also like to add: hi.</p>
       </div>
     </section>
