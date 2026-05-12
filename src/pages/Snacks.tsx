@@ -20,7 +20,7 @@ const Snacks = () => (
           <h1 className="font-display uppercase text-5xl md:text-7xl leading-none tracking-tighter">
             Snacks<span className="text-primary">.</span>
           </h1>
-          <p className="font-mono text-lg max-w-xl text-balance">
+          <p className="font-sans text-lg leading-relaxed max-w-xl text-balance">
             Crypto was rejected on grounds of vibes. We picked Snacks instead.
             Snacks are non-fungible (unless you're hungry). They are not investment vehicles. They are vehicles for being nice.
           </p>

@@ -14,7 +14,7 @@ const OpenSource = () => (
       <div className="space-y-2">
         <span className="brutal-border bg-secondary text-secondary-foreground px-2 py-1 text-[10px] font-mono uppercase inline-block">License · MIT-Peace</span>
         <h1 className="font-display uppercase text-5xl md:text-7xl leading-none tracking-tighter">The Prompt.</h1>
-        <p className="font-mono text-lg max-w-2xl">
+        <p className="font-sans text-lg leading-relaxed max-w-2xl">
           World peace, source-available. Read it. Run it. Improve it. Send a pull request to your group chat.
         </p>
       </div>

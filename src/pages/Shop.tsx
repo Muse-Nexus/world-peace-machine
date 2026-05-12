@@ -86,7 +86,7 @@ const Shop = () => {
           <h1 className="font-display uppercase text-5xl md:text-7xl leading-none tracking-tighter">
             Support Mark<span className="text-primary">.</span>
           </h1>
-          <p className="font-mono text-lg max-w-2xl">
+          <p className="font-sans text-lg leading-relaxed max-w-2xl">
             World peace was free for you. It was not free for Mark (snacks aren't free).
           </p>
         </div>

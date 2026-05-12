@@ -27,7 +27,7 @@ const Synthesism = () => {
             <h1 className="font-display uppercase text-5xl md:text-7xl leading-none tracking-tighter">
               Synth<span className="text-coral">esism</span>
             </h1>
-            <p className="font-mono text-lg max-w-xl text-balance">
+            <p className="font-sans text-lg leading-relaxed max-w-xl text-balance">
               The doctrine that all isms have something useful to say if you let them sit at the same table and don't let any of them give a long speech.
               (We considered "Masterism" but it sounded like a cult and Mark already has a podcast.)
             </p>
