@@ -58,8 +58,8 @@ const Index = () => {
     <PageShell>
       {/* HERO */}
       <section className="relative overflow-hidden">
-        <div className="container grid lg:grid-cols-2 gap-8 py-12 lg:py-20 items-center">
-          <div className="space-y-6 animate-fade-in">
+        <div className="container grid lg:grid-cols-2 gap-12 py-20 lg:py-28 items-center">
+          <div className="space-y-8 animate-fade-in">
             <div className="flex flex-wrap items-center gap-2">
               <span className="official-border bg-primary text-primary-foreground px-2 py-1 text-[10px] font-mono uppercase">v.2 · "cause v.1 was ugly af"</span>
               <span className="official-border bg-coral text-coral-foreground px-2 py-1 text-[10px] font-mono uppercase">Open-Sourced</span>
@@ -67,7 +67,7 @@ const Index = () => {
               <span className="official-border bg-card px-2 py-1 text-[10px] font-mono uppercase">There Will Be Snacks</span>
             </div>
 
-            <h1 className="font-display uppercase text-5xl md:text-7xl leading-[0.9] tracking-tighter text-balance">
+            <h1 className="font-display uppercase text-5xl md:text-6xl leading-[1.05] tracking-normal text-balance">
               I <span className="text-primary">vibe-coded</span>
               <br />
               world{" "}
@@ -78,7 +78,7 @@ const Index = () => {
               .
             </h1>
 
-            <p className="text-lg md:text-xl font-mono text-foreground/80 max-w-xl text-balance">
+            <p className="text-lg md:text-xl font-sans leading-relaxed text-foreground/80 max-w-prose text-balance">
               Hi. I'm Mark. I believe the children are our future. Also, I went ahead and <span className="text-coral font-bold">hacked</span> global harmony in a single prompt (and then edited with more prompts).
               You're welcome. Kinda weird that nobody was doing it. If you feel like you owe me, I would like to validate that feeling.
             </p>
@@ -101,7 +101,7 @@ const Index = () => {
               </Link>
             </div>
 
-            <p className="text-xs font-mono text-muted-foreground pt-4 border-t-2 border-foreground/10">
+            <p className="text-xs font-mono text-muted-foreground pt-6 border-t-2 border-foreground/10">
               ⓘ Endorsed by: nobody yet. Pending verification by literally everyone. Snacks &amp; kindness are legal tender.
             </p>
           </div>
@@ -126,13 +126,13 @@ const Index = () => {
       </section>
 
       {/* THREE PILLARS */}
-      <section className="container py-16 lg:py-24">
-        <div className="flex items-center gap-4 mb-10">
-          <span className="font-display text-7xl text-coral">01</span>
-          <h2 className="font-display uppercase text-3xl md:text-5xl">Three pillars. Real ones.</h2>
+      <section className="container py-20 lg:py-32">
+        <div className="flex items-center gap-5 mb-14">
+          <span className="font-display text-6xl md:text-7xl text-coral leading-none">01</span>
+          <h2 className="font-display uppercase text-3xl md:text-4xl leading-tight">Three pillars. Real ones.</h2>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-8">
           {[
             {
               title: "Synthesism",
@@ -157,19 +157,19 @@ const Index = () => {
             },
           ].map((p) => (
             <Link key={p.title} to={p.to} className="group">
-              <article className={`official-border official-shadow ${p.color} p-6 h-full transition-all group-hover:translate-x-[3px] group-hover:translate-y-[3px] group-hover:shadow-none`}>
+              <article className={`official-border official-shadow ${p.color} p-8 h-full transition-all group-hover:translate-x-[3px] group-hover:translate-y-[3px] group-hover:shadow-none`}>
                 <p className="text-[10px] font-mono uppercase opacity-80">{p.tag}</p>
-                <h3 className="font-display uppercase text-3xl mt-1">{p.title}</h3>
-                <p className="font-mono text-sm mt-4 leading-relaxed">{p.body}</p>
-                <p className="text-xs font-mono uppercase mt-6 underline">enter →</p>
+                <h3 className="font-display uppercase text-3xl mt-2 leading-tight">{p.title}</h3>
+                <p className="font-sans text-base mt-5 leading-relaxed">{p.body}</p>
+                <p className="text-xs font-mono uppercase mt-8 underline">enter →</p>
               </article>
             </Link>
           ))}
         </div>
 
         {/* Mid CTA strip — under the pillars */}
-        <div className="mt-10 official-border official-shadow bg-mustard text-mustard-foreground p-5 flex flex-wrap items-center justify-between gap-4">
-          <p className="font-display uppercase text-xl md:text-2xl">
+        <div className="mt-14 official-border official-shadow bg-mustard text-mustard-foreground p-7 flex flex-wrap items-center justify-between gap-5">
+          <p className="font-display uppercase text-xl md:text-2xl leading-tight max-w-xl">
             Pick a door. Any door. We'll count it as activism.
           </p>
           <div className="flex flex-wrap gap-2">
@@ -187,11 +187,11 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="bg-foreground text-background py-16 lg:py-24 official-border border-x-0">
-        <div className="container grid md:grid-cols-3 gap-8 items-center">
-          <div className="md:col-span-2 space-y-4">
+      <section className="bg-foreground text-background py-20 lg:py-32 official-border border-x-0">
+        <div className="container grid md:grid-cols-3 gap-10 items-center">
+          <div className="md:col-span-2 space-y-5">
             <span className="official-border border-background bg-coral text-coral-foreground px-2 py-1 text-[10px] font-mono uppercase inline-block">Manifesto · excerpt</span>
-            <p className="font-display uppercase text-3xl md:text-5xl leading-tight text-balance">
+            <p className="font-display uppercase text-3xl md:text-4xl leading-[1.15] text-balance">
               "We did not ask permission. We did not form a committee. We just decided, on a Tuesday, to be cool to each other. Forever. Also: war is dumb."
             </p>
             <p className="text-sm font-mono opacity-70">— from the manifesto. seven articles. zero borrowed lyrics.</p>
@@ -205,17 +205,17 @@ const Index = () => {
       </section>
 
       {/* DOORS */}
-      <section className="container py-16 lg:py-24">
-        <div className="flex items-center gap-4 mb-10">
-          <span className="font-display text-7xl text-coral">02</span>
-          <h2 className="font-display uppercase text-3xl md:text-5xl">Don't want to give? Check the doors.</h2>
+      <section className="container py-20 lg:py-32">
+        <div className="flex items-center gap-5 mb-10">
+          <span className="font-display text-6xl md:text-7xl text-coral leading-none">02</span>
+          <h2 className="font-display uppercase text-3xl md:text-4xl leading-tight">Don't want to give? Check the doors.</h2>
         </div>
-        <p className="font-mono text-muted-foreground mb-8 max-w-2xl">
+        <p className="font-sans text-muted-foreground mb-10 max-w-prose leading-relaxed">
           We built a bunch of pages. Most of them are super relevant. One of them is just here.
           It's okay. They all count toward something.
         </p>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { to: "/no-nukes", label: "No Nukes", emoji: "🚫" },
             { to: "/no-bickering", label: "No Bickering", emoji: "🤐" },
@@ -228,7 +228,7 @@ const Index = () => {
             { to: "/open-source", label: "The Prompt", emoji: "📜" },
             { to: "/shop", label: "Tip Jar", emoji: "💙" },
           ].map((d) => (
-            <Link key={d.to} to={d.to} className="official-border bg-card p-4 hover:bg-coral hover:text-coral-foreground transition-colors group">
+            <Link key={d.to} to={d.to} className="official-border bg-card p-5 hover:bg-coral hover:text-coral-foreground transition-colors group">
               <p className="text-3xl mb-2 group-hover:animate-wobble">{d.emoji}</p>
               <p className="font-display uppercase text-sm">{d.label}</p>
               <p className="text-[10px] font-mono opacity-60 mt-1">{d.to}</p>
@@ -238,13 +238,13 @@ const Index = () => {
       </section>
 
       {/* FINAL BIG CTA — multi-button blowout */}
-      <section className="container pb-20">
-        <div className="official-border official-shadow bg-primary text-primary-foreground p-8 md:p-12 text-center space-y-6">
+      <section className="container pb-24">
+        <div className="official-border official-shadow bg-primary text-primary-foreground p-10 md:p-14 text-center space-y-7">
           <p className="text-[10px] font-mono uppercase tracking-widest opacity-80">⚠ this is the part where you do a thing</p>
-          <h2 className="font-display uppercase text-4xl md:text-6xl leading-none">
+          <h2 className="font-display uppercase text-4xl md:text-5xl leading-[1.05]">
             Okay. Your move.
           </h2>
-          <p className="font-mono max-w-2xl mx-auto opacity-90">
+          <p className="font-sans text-lg max-w-prose mx-auto opacity-90 leading-relaxed">
             World peace is shipped. The repo is public. Mark works for snacks.
             You have approximately five (5) reasonable next actions:
           </p>

@@ -1,48 +1,59 @@
-## What I found searching online
+# Readability Pass — "Yuyu Note"
 
-Per Lovable's own docs and FAQ, **OG image / social metadata is controlled in two places** in a Lovable project, and they can fight each other:
+## The note (taken seriously)
+> "Bro I had seizures while trying to understand what's going on on that page. The block spacings are too tight and the condensed heading fonts and mono body didn't make things easier rather." — Yuyu Odukoyas
 
-1. **`index.html`** — the `<meta property="og:*">` tags we hand-wrote (currently pointing at `/og-image.png?v=2`).
-2. **Project Settings → Site Metadata** (in the Publish dialog) — Lovable's built-in panel for favicon, title, description, **and OG image upload**. When set, Lovable's hosting layer can inject/override these on the published site.
+Translation: the brutalist vibe is fighting basic readability. Right now every paragraph is JetBrains Mono, every headline is Archivo Black UPPERCASE with `tracking-tighter`, and section/element padding is cramped. We keep the brand. We fix the legibility.
 
-The most common Lovable-specific failure modes (from the docs + community fix guides):
+## What changes (scope: visual + tokens only, no feature changes)
 
-- **Stale `<head>` from a prior publish.** Frontend changes only go live after you click **Publish → Update** in the Lovable publish dialog. Edits to `index.html` saved in the editor are NOT live until you re-publish. (Backend deploys auto; frontend does not.)
-- **Site Metadata panel empty or pointing to a different image** than `index.html`, so the deployed HTML doesn't match what we see in the source.
-- **Scraper caches.** FB/LinkedIn/X each cache the first scrape for days. Fixing the HTML doesn't refresh them — you have to force a re-scrape per platform.
-- **Image needs to be a real absolute URL, ≥1200×630, publicly fetchable, and < ~5MB.** A 404 or oversized image causes silent failure.
+### 1. Type system — body copy off mono
+- **Body default**: switch `body` from `font-mono` to `font-sans` (Inter) globally in `src/index.css`. Inter at 16–18px reads dramatically better for paragraphs.
+- **Mono stays for**: tag chips, captions, code blocks, kickers, footer fine-print, button micro-labels (`text-[10px] font-mono uppercase`). Anywhere it's a *texture*, not a *paragraph*.
+- **Sweep pages** to replace `font-mono` on long-form `<p>` blocks with `font-sans` (Index, Manifesto, Snacks, Shop, OpenSource, Synthesism, Slacktivate, Neighbors, Blog, PledgeWalls, Validate, Chat). Leave 10–12px mono labels alone.
 
-## Plan
+### 2. Type system — headlines breathe
+- Keep Archivo Black as display (it's the brand) but:
+  - Drop `tracking-tighter` → use default tracking, or `tracking-tight` only on the very largest hero H1.
+  - Bump `leading-[0.9]` → `leading-[1.05]` on hero, `leading-tight` on section H2s.
+  - Cap uppercase H2/H3 at sensible sizes; don't go bigger than `text-4xl md:text-5xl` for section headers (currently up to `text-7xl`).
+- **Add a sub-display style** for long titles: Inter 800 weight, normal case, used when Archivo Black is overkill (e.g. card titles longer than 3 words).
 
-### 1. Verify what's actually deployed (read-only check first)
-- Fetch `https://ivibecodedworldpeace.com/` with a Facebook-scraper user agent and dump the `<head>` to confirm the live HTML matches our repo's `index.html`.
-- Fetch `https://ivibecodedworldpeace.com/og-image.png?v=2` directly to confirm 200 OK, correct content-type, and dimensions 1200×630.
+### 3. Spacing system — make blocks breathe
+Establish consistent rhythm tokens applied across all pages:
+- Section vertical padding: `py-12 lg:py-20` → `py-20 lg:py-32`.
+- Stack gaps inside hero/section: `space-y-6` → `space-y-8`.
+- Paragraph `max-w` for long copy: cap at `max-w-prose` (~65ch) so lines don't run wall-to-wall.
+- Paragraph leading: add `leading-relaxed` (1.625) to body `<p>`.
+- Card interior padding: `p-6` → `p-8` on content-heavy cards (pillars, prompt card, tip tiers).
+- Grid gaps: `gap-3`/`gap-6` → `gap-6`/`gap-8` on the doors grid and pillars.
 
-### 2. Reconcile Lovable's Site Metadata panel
-- Ask you to open **Publish → Site Metadata** (or Project Settings → Site Metadata) and either:
-  - (a) **upload the same `og-image.png`** there so Lovable's injected tags match our hand-written ones, OR
-  - (b) **clear** that panel entirely so only our `index.html` tags are used.
-- I'll tell you which to do based on what step 1 reveals.
+### 4. Hero specifically
+- H1 `text-5xl md:text-7xl tracking-tighter leading-[0.9]` → `text-5xl md:text-6xl tracking-normal leading-[1.05]`.
+- Lead paragraph: `font-mono` → `font-sans text-lg md:text-xl leading-relaxed`.
+- The badge row: keep mono micro-caps (they're working as texture).
 
-### 3. Re-publish
-- Click **Publish → Update** in the Lovable publish dialog. Without this, none of the `index.html` edits from the last few rounds are actually live on `ivibecodedworldpeace.com`.
+### 5. Background grid
+- The 32px grid lines on body add visual noise. Lighten from `0.04` opacity → `0.025`, or bump grid spacing to 48px so it sits further behind text.
 
-### 4. Harden the tags (small code edit)
-- Add `og:site_name`, `og:locale`, and a `?v=3` cache-bust to force a fresh fetch.
-- Confirm `og:image` uses absolute https URL (already does).
+## What does NOT change
+- Color palette (UN blue / coral / mustard / cream).
+- Brutalist borders, hard shadows, stamps, ticker.
+- Globe, animations, voice, copy.
+- Any feature, route, or backend behavior.
 
-### 5. Force scraper cache refresh
-- Facebook: https://developers.facebook.com/tools/debug/ → enter URL → **Scrape Again** (twice).
-- LinkedIn: https://www.linkedin.com/post-inspector/ → Inspect.
-- X/Twitter: post a test tweet (their validator is dead); X will re-fetch on first share.
-- iMessage/WhatsApp cache per-device — test from a fresh contact thread.
+## Files touched
+- `src/index.css` — body font, grid opacity, default heading tracking/leading.
+- `tailwind.config.ts` — no change needed (Inter already loaded).
+- All page files under `src/pages/*` — sweep `font-mono` on `<p>` long-form, loosen section padding.
+- `src/components/PageShell.tsx`, `SiteHeader.tsx`, `SiteFooter.tsx` — verify and adjust spacing.
 
-## Technical details
+## Verification
+1. Visual check at desktop (1230px — current viewport) and mobile (375px) on `/`, `/manifesto`, `/shop`, `/snacks`.
+2. Re-read a paragraph at arm's length — should not feel like reading a receipt.
+3. Confirm brand still reads as brutalist-protest, not generic SaaS.
 
-- Lovable serves a SPA; `<head>` from `index.html` IS in the initial HTML response (good — scrapers don't run JS, and ours don't need to).
-- Lovable hosting sits behind Cloudflare; intermittent 403s on `facebookexternalhit` are real but not the primary suspect once we confirm the deployed HTML.
-- The two-source-of-truth issue (Site Metadata panel vs. `index.html`) is the most likely culprit given iMessage works but FB/LinkedIn don't — iMessage is more forgiving and may be reading our tags while FB sees Lovable's injected/empty ones.
-
-## Deliverable
-
-After you approve, I'll: run the live `<head>` diff, tell you exactly what to set/clear in the Site Metadata panel, bump the cache-bust to `?v=3`, and give you the three debugger links to click.
+## Out of scope (call out for follow-up if desired)
+- Replacing Archivo Black entirely (e.g. with "Space Grotesk" heavy, or "Bebas Neue") — bigger brand decision, ask first.
+- Dark mode polish.
+- Reducing the *number* of CTAs on the home page (Yuyu's "what's going on" might also be CTA-overload — separate fight).

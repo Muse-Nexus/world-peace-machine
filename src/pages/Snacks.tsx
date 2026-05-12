@@ -13,14 +13,14 @@ const market = [
 
 const Snacks = () => (
   <PageShell>
-    <section className="container py-12 md:py-20 max-w-5xl">
+    <section className="container py-20 md:py-28 max-w-5xl">
       <div className="grid md:grid-cols-2 gap-8 items-end">
         <div className="space-y-3">
           <span className="brutal-border bg-mustard text-mustard-foreground px-2 py-1 text-[10px] font-mono uppercase inline-block">The New Currency</span>
           <h1 className="font-display uppercase text-5xl md:text-7xl leading-none tracking-tighter">
             Snacks<span className="text-primary">.</span>
           </h1>
-          <p className="font-mono text-lg max-w-xl text-balance">
+          <p className="font-sans text-lg leading-relaxed max-w-xl text-balance">
             Crypto was rejected on grounds of vibes. We picked Snacks instead.
             Snacks are non-fungible (unless you're hungry). They are not investment vehicles. They are vehicles for being nice.
           </p>

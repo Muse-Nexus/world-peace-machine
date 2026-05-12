@@ -41,13 +41,13 @@ const Neighbors = () => {
 
   return (
     <PageShell>
-      <section className="container py-12 md:py-20 max-w-5xl">
+      <section className="container py-20 md:py-28 max-w-5xl">
         <div className="space-y-2">
           <span className="official-border bg-coral text-coral-foreground px-2 py-1 text-[10px] font-mono uppercase inline-block">Field Report · vetted</span>
           <h1 className="font-display uppercase text-5xl md:text-7xl leading-none tracking-tighter">
             You Got <span className="text-primary">Neighbors</span>.
           </h1>
-          <p className="font-mono text-lg max-w-2xl">
+          <p className="font-sans text-lg leading-relaxed max-w-2xl">
             Go talk to them. We checked them out. Most are really nice.
             One is Esther. Heed the warnings. World peace starts at the property line.
           </p>

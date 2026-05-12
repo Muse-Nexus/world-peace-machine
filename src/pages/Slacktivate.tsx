@@ -30,13 +30,13 @@ const Slacktivate = () => {
 
   return (
     <PageShell>
-      <section className="container py-12 md:py-20 max-w-5xl">
+      <section className="container py-20 md:py-28 max-w-5xl">
         <div className="space-y-2">
           <span className="brutal-border bg-accent text-accent-foreground px-2 py-1 text-[10px] font-mono uppercase inline-block">Bar is on the floor</span>
           <h1 className="font-display uppercase text-5xl md:text-7xl leading-none tracking-tighter">
             Slack<span className="text-primary">tivate</span>.
           </h1>
-          <p className="font-mono text-lg max-w-2xl">
+          <p className="font-sans text-lg leading-relaxed max-w-2xl">
             Don't want to give? Heard. Here are four (4) ways to do almost nothing and still count.
           </p>
         </div>

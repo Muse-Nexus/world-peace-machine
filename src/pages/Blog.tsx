@@ -31,7 +31,7 @@ export const BlogIndex = () => {
 
   return (
     <PageShell>
-      <section className="container py-12 md:py-20 max-w-5xl">
+      <section className="container py-20 md:py-28 max-w-5xl">
         <div className="space-y-2">
           <span className="official-border bg-coral text-coral-foreground px-2 py-1 text-[10px] font-mono uppercase inline-block">The Blog · listicles &amp; vibes</span>
           <h1 className="font-display uppercase text-5xl md:text-7xl leading-none tracking-tighter">
@@ -87,7 +87,7 @@ export const BlogPost = () => {
 
   return (
     <PageShell>
-      <section className="container py-12 md:py-20 max-w-3xl">
+      <section className="container py-20 md:py-28 max-w-3xl">
         <Link to="/blog" className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest hover:text-coral">
           <ArrowLeft className="h-3 w-3" /> back to the blog
         </Link>

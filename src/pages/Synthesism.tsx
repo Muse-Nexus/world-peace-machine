@@ -20,14 +20,14 @@ const Synthesism = () => {
   const [picked, setPicked] = useState<number | null>(null);
   return (
     <PageShell>
-      <section className="container py-12 md:py-20 max-w-5xl">
+      <section className="container py-20 md:py-28 max-w-5xl">
         <div className="grid md:grid-cols-3 gap-6 items-end">
           <div className="md:col-span-2 space-y-3">
             <span className="official-border bg-primary text-primary-foreground px-2 py-1 text-[10px] font-mono uppercase inline-block">The New Ism · Mascot Approved</span>
             <h1 className="font-display uppercase text-5xl md:text-7xl leading-none tracking-tighter">
               Synth<span className="text-coral">esism</span>
             </h1>
-            <p className="font-mono text-lg max-w-xl text-balance">
+            <p className="font-sans text-lg leading-relaxed max-w-xl text-balance">
               The doctrine that all isms have something useful to say if you let them sit at the same table and don't let any of them give a long speech.
               (We considered "Masterism" but it sounded like a cult and Mark already has a podcast.)
             </p>

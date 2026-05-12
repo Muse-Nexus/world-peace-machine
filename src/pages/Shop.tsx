@@ -80,13 +80,13 @@ const Shop = () => {
 
   return (
     <PageShell>
-      <section className="container py-12 md:py-20 max-w-5xl">
+      <section className="container py-20 md:py-28 max-w-5xl">
         <div className="space-y-2">
           <span className="brutal-border bg-primary text-primary-foreground px-2 py-1 text-[10px] font-mono uppercase inline-block">tip jar · prompt market</span>
           <h1 className="font-display uppercase text-5xl md:text-7xl leading-none tracking-tighter">
             Support Mark<span className="text-primary">.</span>
           </h1>
-          <p className="font-mono text-lg max-w-2xl">
+          <p className="font-sans text-lg leading-relaxed max-w-2xl">
             World peace was free for you. It was not free for Mark (snacks aren't free).
           </p>
         </div>

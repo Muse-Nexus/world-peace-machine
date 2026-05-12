@@ -99,13 +99,16 @@
   * { @apply border-border; }
   html { -webkit-font-smoothing: antialiased; }
   body {
-    @apply bg-background text-foreground font-mono;
+    @apply bg-background text-foreground font-sans;
     background-image:
-      linear-gradient(hsl(var(--primary) / 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(var(--primary) / 0.04) 1px, transparent 1px);
-    background-size: 32px 32px, 32px 32px;
+      linear-gradient(hsl(var(--primary) / 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--primary) / 0.025) 1px, transparent 1px);
+    background-size: 48px 48px, 48px 48px;
+    font-size: 17px;
+    line-height: 1.65;
   }
-  h1, h2, h3, h4 { @apply font-display uppercase tracking-tight; }
+  h1, h2, h3, h4 { @apply font-display uppercase; letter-spacing: -0.01em; line-height: 1.05; }
+  p { text-wrap: pretty; }
 }
 
 @layer components {

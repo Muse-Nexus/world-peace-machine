@@ -38,7 +38,7 @@ const PledgeWall = ({ category, title, kicker, color }: { category: "no-nukes" |
 
   return (
     <PageShell>
-      <section className="container py-12 md:py-20 max-w-4xl">
+      <section className="container py-20 md:py-28 max-w-4xl">
         <div className="space-y-2">
           <span className={`brutal-border ${color} px-2 py-1 text-[10px] font-mono uppercase inline-block`}>{kicker}</span>
           <h1 className="font-display uppercase text-5xl md:text-7xl leading-none tracking-tighter">{title}</h1>
